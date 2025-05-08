@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Preisberechnung mit fortlaufenden Nummern</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+    input[type="number"] { width: 80px; }
+    button { margin: 5px; padding: 8px 12px; }
+    .info-label { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Preisberechnung</h1>
+
+  <div>
+    <p><span class="info-label">Holzart:</span> <span id="holzname"></span></p>
+    <p><span class="info-label">Stärke:</span> <span id="staerke"></span> mm</p>
+    <p><span class="info-label">Art.-Nr.:</span> <span id="artnr"></span></p>
+    <p><span class="info-label">Preis pro m²:</span> <span id="preis"></span> €</p>
+  </div>
+
+  <table id="input-tabelle">
+    <thead>
+      <tr>
+        <th>Nr.</th>
+        <th>Länge (cm)</th>
+        <th>Breite (cm)</th>
+        <th>Stück</th>
+        <th>m²</th>
+      </tr>
+    </thead>
+    <tbody id="tabelle-body">
+      <!-- Dynamische Zeilen -->
+    </tbody>
+  </table>
+
+  <button onclick="zeileHinzufuegen()">➕ Neue Zeile</button>
+  <button onclick="berechne()">✅ Berechnen</button>
+  <button onclick="zurueck()">⬅️ Holzart wählen</button>
+  <button onclick="exportierePDF()">📄 Exportieren als PDF</button>
+
+  <h3 id="ergebnis"></h3>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+
+    // URL-Parameter extrahieren
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    // Werte setzen
+    const holzname = getParam('holzname');
+    const staerke = getParam('staerke');
+    const preis = parseFloat(getParam('preis'));
+    const artnr = getParam('artnr');
+
+    document.getElementById('holzname').textContent = holzname;
+    document.getElementById('staerke').textContent = staerke;
+    document.getElementById('preis').textContent = preis.toFixed(2);
+    document.getElementById('artnr').textContent = artnr;
+
+    const tbody = document.getElementById('tabelle-body');
+    let zeilenNummer = 1; // Startwert der Zeilennummer
+
+    function zeileHinzufuegen() {
+      const zeile = document.createElement('tr');
+
+      zeile.innerHTML = `
+        <td class="zeilenNummer">${zeilenNummer}</td>
+        <td><input type="number" min="0" onchange="updateM2(this)"></td>
+        <td><input type="number" min="0" onchange="updateM2(this)"></td>
+        <td><input type="number" min="1" value="1" onchange="updateM2(this)"></td>
+        <td class="m2-zelle">0.00</td>
+      `;
+
+      tbody.appendChild(zeile);
+      zeilenNummer++; // Nummer nach jedem Hinzufügen erhöhen
+    }
+
+    function updateM2(elem) {
+      const row = elem.closest('tr');
+      const inputs = row.querySelectorAll('input');
+      const [laenge, breite, stueck] = Array.from(inputs).map(i => parseFloat(i.value) || 0);
+      const m2 = (laenge / 100) * (breite / 100) * stueck;
+      row.querySelector('.m2-zelle').textContent = m2.toFixed(2);
+    }
+
+    function berechne() {
+      let gesamtM2 = 0;
+      const m2Zellen = document.querySelectorAll('.m2-zelle');
+      m2Zellen.forEach(zelle => gesamtM2 += parseFloat(zelle.textContent));
+      const gesamtPreis = gesamtM2 * preis;
+
+      document.getElementById('ergebnis').textContent =
+        `Gesamtfläche: ${gesamtM2.toFixed(2)} m² | Gesamtpreis: ${gesamtPreis.toFixed(2)} €`;
+    }
+
+    function zurueck() {
+      window.location.href = 'preisrechner.html'; // Zurück zur Holzart-Auswahl
+    }
+
+    function exportierePDF() {
+      const doc = new jsPDF();
+
+      // Füge die Header der Tabelle und die Berechnungsdaten zum PDF hinzu
+      doc.text(`Holzart: ${holzname}`, 10, 10);
+      doc.text(`Stärke: ${staerke} mm`, 10, 20);
+      doc.text(`Art.-Nr.: ${artnr}`, 10, 30);
+      doc.text(`Preis pro m²: ${preis.toFixed(2)} €`, 10, 40);
+
+      let yOffset = 50;
+      const m2Zellen = document.querySelectorAll('.m2-zelle');
+      const zeilen = document.querySelectorAll('.zeilenNummer');
+
+      m2Zellen.forEach((zelle, idx) => {
+        const m2 = parseFloat(zelle.textContent).toFixed(2);
+        const nr = zeilen[idx].textContent;
+        doc.text(`Zeile ${nr} - m²: ${m2}`, 10, yOffset);
+        yOffset += 10;
+      });
+
+      // PDF herunterladen
+      doc.save('Preisberechnung.pdf');
+    }
+
+    // Erste Zeile automatisch hinzufügen
+    zeileHinzufuegen();
+  </script>
+</body>
+</html>

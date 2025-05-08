@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Preisberechnung - Stärke wählen</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 5px; padding: 10px 15px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Wähle eine Plattenstärke</h1>
+  <div id="stärken-container"></div>
+
+  <button onclick="zurueck()">⬅️ Zurück zur Holzart</button>
+
+  <script>
+    // URL-Parameter extrahieren (Holzart-Name)
+    function getParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    const holzname = getParam('holzname');
+    // Beispielhafte Daten für Preis und Artikelnummer (kann später aus JSON oder einer anderen Quelle kommen)
+    const holzDaten = {
+      'Spanplatte Roh': [
+        { mm: 8, preisProM2: 4.75, artikelnummer: '1234' },
+        { mm: 10, preisProM2: 5.25, artikelnummer: '1235' }
+      ],
+      'Multiplexplatte': [
+        { mm: 12, preisProM2: 8.10, artikelnummer: '2341' },
+        { mm: 15, preisProM2: 9.50, artikelnummer: '2342' }
+      ]
+    };
+
+    // Dynamisch Buttons erstellen
+    function ladeStaerken() {
+      const container = document.getElementById('stärken-container');
+      container.innerHTML = ''; // Container leeren
+
+      if (holzDaten[holzname]) {
+        holzDaten[holzname].forEach(staerke => {
+          const button = document.createElement('button');
+          button.textContent = `${staerke.mm} mm`;
+          button.onclick = () => {
+            window.location.href = `preisberechnung.html?holzname=${encodeURIComponent(holzname)}&staerke=${staerke.mm}&preis=${staerke.preisProM2}&artnr=${encodeURIComponent(staerke.artikelnummer)}`;
+          };
+          container.appendChild(button);
+        });
+      } else {
+        container.innerHTML = 'Keine Daten für diese Holzart gefunden.';
+      }
+    }
+
+    function zurueck() {
+      window.location.href = 'preisrechner.html'; // Zurück zur Holzart-Auswahl
+    }
+
+    // Lade die Stärke-Buttons, wenn die Seite geladen wird
+    ladeStaerken();
+  </script>
+</body>
+</html>

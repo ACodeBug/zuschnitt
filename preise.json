@@ -1,0 +1,29 @@
+[
+    {
+      "holzname": "Spanplatte Roh",
+      "artikelnummer": "SP001",
+      "stärken": [
+        { "mm": 8, "preisProM2": 4.75 },
+        { "mm": 16, "preisProM2": 5.10 },
+        { "mm": 18, "preisProM2": 5.40 }
+      ]
+    },
+    {
+      "holzname": "MDF Weiß",
+      "artikelnummer": "MD001",
+      "stärken": [
+        { "mm": 10, "preisProM2": 6.20 },
+        { "mm": 16, "preisProM2": 6.80 }
+      ]
+    },
+    {
+      "holzname": "Multiplex Birke",
+      "artikelnummer": "MP001",
+      "stärken": [
+        { "mm": 12, "preisProM2": 9.80 },
+        { "mm": 18, "preisProM2": 10.50 },
+        { "mm": 24, "preisProM2": 11.20 }
+      ]
+    }
+  ]
+  
