@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventur – Holzreste</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { margin: 5px; padding: 8px 12px; font-size: 14px; }
+    .holzarten, .staerken { margin-bottom: 10px; }
+    table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background-color: #eee; }
+    .summe, .aktionen { margin-top: 20px; font-weight: bold; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <h1>Inventur – Holzreste</h1>
+
+  <div class="holzarten" id="holzartenContainer">
+    <h3>Holzart wählen:</h3>
+    <!-- Holzart-Buttons -->
+  </div>
+
+  <div class="staerken" id="staerkenContainer" style="display:none">
+    <h3>Stärke wählen:</h3>
+    <!-- Stärke-Buttons -->
+  </div>
+
+  <table id="tabelle">
+    <thead>
+      <tr>
+        <th>Artikelnummer</th>
+        <th>Holzart</th>
+        <th>Stärke (mm)</th>
+        <th>Breite (cm)</th>
+        <th>Länge (cm)</th>
+        <th>Fläche (m²)</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="summe" id="gesamtflaeche">Gesamtfläche: 0.000 m²</div>
+
+  <div class="aktionen">
+    <button onclick="sortieren()">🔀 Sortieren & Zusammenfassen</button>
+    <button onclick="zurueck()">🔙 Zurück zur Startseite</button>
+    <button onclick="tabelleSpeichern()">💾 Tabelle speichern</button>
+    <button onclick="tabelleAlsPDF()">📄 Als PDF speichern</button>
+  </div>
+
+  <script>
+    let daten = [];
+    let auswahl = JSON.parse(localStorage.getItem('auswahlFall2') || '[]');
+    let ausgewaehlteHolzart = null;
+
+    async function ladePreise() {
+      const res = await fetch('preise.json');
+      daten = await res.json();
+      zeigeHolzarten();
+      fülleTabelle();
+    }
+
+    function zeigeHolzarten() {
+      const container = document.getElementById('holzartenContainer');
+      daten.forEach(holz => {
+        const btn = document.createElement('button');
+        btn.textContent = holz.holzname;
+        btn.onclick = () => {
+          ausgewaehlteHolzart = holz;
+          zeigeStaerken(holz);
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function zeigeStaerken(holz) {
+      const container = document.getElementById('staerkenContainer');
+      container.style.display = 'block';
+      container.innerHTML = '<h3>Stärke wählen:</h3>';
+      holz.stärken.forEach(s => {
+        const btn = document.createElement('button');
+        btn.textContent = s.mm + ' mm';
+        btn.onclick = () => {
+          auswahl.push({
+            artikelnummer: holz.artikelnummer,
+            holzname: holz.holzname,
+            staerke: s.mm,
+            breite: '',
+            laenge: '',
+            m2: 0
+          });
+          speichereUndAktualisiere();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function aktualisiereFeld(index, feld, wert) {
+      auswahl[index][feld] = parseFloat(wert);
+      const b = parseFloat(auswahl[index].breite);
+      const l = parseFloat(auswahl[index].laenge);
+      auswahl[index].m2 = (b && l) ? (b * l / 10000) : 0;
+      speichereUndAktualisiere();
+    }
+
+    function entferne(index) {
+      auswahl.splice(index, 1);
+      speichereUndAktualisiere();
+    }
+
+    function speichereUndAktualisiere() {
+      localStorage.setItem('auswahlFall2', JSON.stringify(auswahl));
+      fülleTabelle();
+    }
+
+    function fülleTabelle() {
+      const tbody = document.querySelector('#tabelle tbody');
+      tbody.innerHTML = '';
+      let gesamt = 0;
+
+      auswahl.forEach((e, i) => {
+        const tr = document.createElement('tr');
+        const flaeche = e.m2 ? e.m2.toFixed(3) : '';
+        gesamt += parseFloat(flaeche) || 0;
+        tr.innerHTML = `
+          <td>${e.artikelnummer}</td>
+          <td>${e.holzname}</td>
+          <td>${e.staerke}</td>
+          <td><input type="number" min="0" value="${e.breite}" onchange="aktualisiereFeld(${i}, 'breite', this.value)"></td>
+          <td><input type="number" min="0" value="${e.laenge}" onchange="aktualisiereFeld(${i}, 'laenge', this.value)"></td>
+          <td>${flaeche}</td>
+          <td><button onclick="entferne(${i})">🗑️</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('gesamtflaeche').textContent = `Gesamtfläche: ${gesamt.toFixed(3)} m²`;
+    }
+
+    function sortieren() {
+      const zusammengefasst = {};
+      auswahl.forEach(e => {
+        const key = `${e.artikelnummer}_${e.staerke}`;
+        if (!zusammengefasst[key]) {
+          zusammengefasst[key] = { ...e, breite: '', laenge: '', m2: 0 };
+        }
+        zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+      });
+      auswahl = Object.values(zusammengefasst);
+      speichereUndAktualisiere();
+    }
+
+    function zurueck() {
+      window.location.href = 'index.html';
+    }
+
+    function tabelleSpeichern() {
+      const dateiName = prompt('Gib den Dateinamen ein, um die Tabelle zu speichern (z. B. "holztabelle.json"):');
+      if (dateiName) {
+        const blob = new Blob([JSON.stringify(auswahl)], { type: 'application/json' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = dateiName;
+        link.click();
+      }
+    }
+
+    // Funktion zum Erstellen eines PDF-Dokuments
+    function tabelleAlsPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      // Tabellenüberschrift
+      doc.setFontSize(12);
+      doc.text('Inventur – Holzreste', 14, 10);
+      doc.autoTable({ 
+        html: '#tabelle', 
+        startY: 20, 
+        theme: 'grid',
+        headStyles: { fillColor: [0, 0, 0] }
+      });
+      
+      // PDF speichern
+      doc.save('holzreste_inventur.pdf');
+    }
+
+    ladePreise();
+  </script>
+</body>
+</html>
