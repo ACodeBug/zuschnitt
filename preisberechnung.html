@@ -2,7 +2,6 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preisberechnung mit fortlaufenden Nummern</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -12,6 +11,8 @@
     input[type="number"] { width: 80px; }
     button { margin: 5px; padding: 8px 12px; }
     .info-label { font-weight: bold; }
+    .loeschen-button { background-color: #e74c3c; color: white; border: none; cursor: pointer; padding: 4px 8px; }
+    .loeschen-button:hover { background-color: #c0392b; }
   </style>
 </head>
 <body>
@@ -32,6 +33,7 @@
         <th>Breite (cm)</th>
         <th>Stück</th>
         <th>m²</th>
+        <th>Aktion</th>
       </tr>
     </thead>
     <tbody id="tabelle-body">
@@ -49,12 +51,10 @@
   <script>
     const { jsPDF } = window.jspdf;
 
-    // URL-Parameter extrahieren
     function getParam(name) {
       return new URLSearchParams(window.location.search).get(name);
     }
 
-    // Werte setzen
     const holzname = getParam('holzname');
     const staerke = getParam('staerke');
     const preis = parseFloat(getParam('preis'));
@@ -66,21 +66,34 @@
     document.getElementById('artnr').textContent = artnr;
 
     const tbody = document.getElementById('tabelle-body');
-    let zeilenNummer = 1; // Startwert der Zeilennummer
 
     function zeileHinzufuegen() {
       const zeile = document.createElement('tr');
 
       zeile.innerHTML = `
-        <td class="zeilenNummer">${zeilenNummer}</td>
+        <td class="zeilenNummer"></td>
         <td><input type="number" min="0" onchange="updateM2(this)"></td>
         <td><input type="number" min="0" onchange="updateM2(this)"></td>
         <td><input type="number" min="1" value="1" onchange="updateM2(this)"></td>
         <td class="m2-zelle">0.00</td>
+        <td><button class="loeschen-button" onclick="zeileLoeschen(this)">🗑️</button></td>
       `;
 
       tbody.appendChild(zeile);
-      zeilenNummer++; // Nummer nach jedem Hinzufügen erhöhen
+      nummernAktualisieren();
+    }
+
+    function zeileLoeschen(button) {
+      const row = button.closest('tr');
+      row.remove();
+      nummernAktualisieren();
+    }
+
+    function nummernAktualisieren() {
+      const nummern = document.querySelectorAll('.zeilenNummer');
+      nummern.forEach((zelle, index) => {
+        zelle.textContent = index + 1;
+      });
     }
 
     function updateM2(elem) {
@@ -102,13 +115,11 @@
     }
 
     function zurueck() {
-      window.location.href = 'index.html'; // Zurück zur Holzart-Auswahl
+      window.location.href = 'index.html';
     }
 
     function exportierePDF() {
       const doc = new jsPDF();
-
-      // Füge die Header der Tabelle und die Berechnungsdaten zum PDF hinzu
       doc.text(`Holzart: ${holzname}`, 10, 10);
       doc.text(`Stärke: ${staerke} mm`, 10, 20);
       doc.text(`Art.-Nr.: ${artnr}`, 10, 30);
@@ -125,7 +136,6 @@
         yOffset += 10;
       });
 
-      // PDF herunterladen
       doc.save('Preisberechnung.pdf');
     }
 
