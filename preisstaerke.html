@@ -2,7 +2,6 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preisberechnung - Stärke wählen</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
@@ -21,40 +20,40 @@
       return new URLSearchParams(window.location.search).get(name);
     }
 
-    const holzname = getParam('holzname');
-    // Beispielhafte Daten für Preis und Artikelnummer (kann später aus JSON oder einer anderen Quelle kommen)
-    const holzDaten = {
-      'Spanplatte Roh': [
-        { mm: 8, preisProM2: 4.75, artikelnummer: '1234' },
-        { mm: 10, preisProM2: 5.25, artikelnummer: '1235' }
-      ],
-      'Multiplexplatte': [
-        { mm: 12, preisProM2: 8.10, artikelnummer: '2341' },
-        { mm: 15, preisProM2: 9.50, artikelnummer: '2342' }
-      ]
-    };
+    const holzname = getParam('holzname'); // Holt sich den Parameter 'holzname' aus der URL
 
-    // Dynamisch Buttons erstellen
-    function ladeStaerken() {
+    // Funktion zum Laden der Holzart-Daten aus der JSON-Datei
+    async function ladeStaerken() {
       const container = document.getElementById('stärken-container');
       container.innerHTML = ''; // Container leeren
 
-      if (holzDaten[holzname]) {
-        holzDaten[holzname].forEach(staerke => {
-          const button = document.createElement('button');
-          button.textContent = `${staerke.mm} mm`;
-          button.onclick = () => {
-            window.location.href = `preisberechnung.html?holzname=${encodeURIComponent(holzname)}&staerke=${staerke.mm}&preis=${staerke.preisProM2}&artnr=${encodeURIComponent(staerke.artikelnummer)}`;
-          };
-          container.appendChild(button);
-        });
-      } else {
-        container.innerHTML = 'Keine Daten für diese Holzart gefunden.';
+      try {
+        const response = await fetch('preise.json');
+        const holzDaten = await response.json();
+
+        // Holzart suchen und Plattenstärken anzeigen
+        const holzArt = holzDaten.find(holz => holz.holzname === holzname);
+
+        if (holzArt) {
+          holzArt.stärken.forEach(staerke => {
+            const button = document.createElement('button');
+            button.textContent = `${staerke.mm} mm`;
+            button.onclick = () => {
+              window.location.href = `preisberechnung.html?holzname=${encodeURIComponent(holzArt.holzname)}&staerke=${staerke.mm}&preis=${staerke.preisProM2}&artnr=${encodeURIComponent(holzArt.artikelnummer)}`;
+            };
+            container.appendChild(button);
+          });
+        } else {
+          container.innerHTML = 'Keine Daten für diese Holzart gefunden.';
+        }
+      } catch (error) {
+        container.innerHTML = 'Fehler beim Laden der Holzarten-Daten.';
+        console.error(error);
       }
     }
 
     function zurueck() {
-      window.location.href = 'index.html'; // Zurück zur Holzart-Auswahl
+      window.location.href = 'fall1.html'; // Zurück zur Holzart-Auswahl
     }
 
     // Lade die Stärke-Buttons, wenn die Seite geladen wird

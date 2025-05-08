@@ -2,64 +2,41 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preisrechner – Holzarten</title>
+  <title>Holz-Zuschnitt – Startseite</title>
   <style>
-    body {
-      font-family: sans-serif;
+    body { font-family: sans-serif; padding: 30px; background: #f9f9f9; }
+    h1 { font-size: 2em; }
+    .karte {
+      background: white;
       padding: 20px;
+      margin: 20px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-
-    h1 {
-      margin-bottom: 20px;
+    a.button {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #007acc;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      margin-top: 10px;
     }
-
-    .holz-button {
-      display: block;
-      margin: 10px 0;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #f0f0f0;
-      border: 1px solid #aaa;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    .holz-button:hover {
-      background-color: #e0e0e0;
+    a.button:hover {
+      background: #005a99;
     }
   </style>
 </head>
 <body>
-  <h1>Wähle eine Holzart</h1>
-  <div id="holzarten-container">Lade Holzarten...</div>
-
-  <script>
-    async function ladeHolzarten() {
-      try {
-        const response = await fetch('preise.json');
-        const daten = await response.json();
-        const container = document.getElementById('holzarten-container');
-        container.innerHTML = ''; // Clear loading text
-
-        daten.forEach(item => {
-          const button = document.createElement('button');
-          button.className = 'holz-button';
-          button.textContent = item.holzname;
-          button.onclick = () => {
-            const url = `preisstaerke.html?holzname=${encodeURIComponent(item.holzname)}`;
-            window.location.href = url;
-          };
-          container.appendChild(button);
-        });
-      } catch (error) {
-        document.getElementById('holzarten-container').textContent = 'Fehler beim Laden der Daten.';
-        console.error('Fehler beim Laden der JSON-Datei:', error);
-      }
-    }
-
-    ladeHolzarten();
-  </script>
+  <h1>Holz-Zuschnitt Assistent</h1>
+  <div class="karte">
+    <h2>Fall 1: Preisberechnung</h2>
+    <p>Berechne den Gesamtpreis basierend auf Maßangaben und Stückzahlen.</p>
+    <a href="fall1.html" class="button">Preis berechnen</a>
+  </div>
+  <div class="karte">
+    <h2>Weitere Optionen (geplant)</h2>
+    <p>Hier könnten später weitere Berechnungsarten oder Visualisierungen erscheinen.</p>
+  </div>
 </body>
 </html>
