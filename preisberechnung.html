@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preisberechnung mit fortlaufenden Nummern</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -44,6 +45,7 @@
   <button onclick="zeileHinzufuegen()">➕ Neue Zeile</button>
   <button onclick="berechne()">✅ Berechnen</button>
   <button onclick="zurueck()">⬅️ Holzart wählen</button>
+  <button onclick="home()">🏠 Heim</button>
   <button onclick="exportierePDF()">📄 Exportieren als PDF</button>
 
   <h3 id="ergebnis"></h3>
@@ -116,6 +118,9 @@
 
     function zurueck() {
       window.location.href = 'fall1.html';
+    }
+    function home() {
+      window.location.href = 'index.html';
     }
 
     function exportierePDF() {

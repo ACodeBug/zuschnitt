@@ -2,6 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Preisberechnung - Stärke wählen</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
@@ -13,6 +14,7 @@
   <div id="stärken-container"></div>
 
   <button onclick="zurueck()">⬅️ Zurück zur Holzart</button>
+  <button onclick="home()">🏠 Heim</button>
 
   <script>
     // URL-Parameter extrahieren (Holzart-Name)
@@ -54,6 +56,9 @@
 
     function zurueck() {
       window.location.href = 'fall1.html'; // Zurück zur Holzart-Auswahl
+    }
+    function home() {
+      window.location.href = 'index.html'; // Zurück zur Holzart-Auswahl
     }
 
     // Lade die Stärke-Buttons, wenn die Seite geladen wird
