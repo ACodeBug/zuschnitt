@@ -5,14 +5,82 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventur – Holzreste</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    button { margin: 5px; padding: 8px 12px; font-size: 14px; }
-    .holzarten, .staerken { margin-bottom: 10px; }
-    table { margin-top: 20px; border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background-color: #eee; }
-    .summe, .aktionen { margin-top: 20px; font-weight: bold; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .holzarten, .staerken {
+      margin-bottom: 20px;
+    }
+
+    #holzartenContainer, #staerkenContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .holz-button {
+      padding: 14px;
+      font-size: 16px;
+      background-color: #f0f0f0;
+      border: 1px solid #aaa;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      width: 100%;
+    }
+
+    .holz-button:hover {
+      background-color: #e0e0e0;
+    }
+
+    table {
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    input[type="number"] {
+      width: 80px;
+    }
+
+    .summe, .aktionen {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .aktionen button {
+      margin: 5px;
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .aktionen button:hover {
+      background-color: #e0e0e0;
+    }
   </style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -21,12 +89,10 @@
 
   <div class="holzarten" id="holzartenContainer">
     <h3>Holzart wählen:</h3>
-    <!-- Holzart-Buttons -->
   </div>
 
   <div class="staerken" id="staerkenContainer" style="display:none">
     <h3>Stärke wählen:</h3>
-    <!-- Stärke-Buttons -->
   </div>
 
   <table id="tabelle">
@@ -70,6 +136,7 @@
       daten.forEach(holz => {
         const btn = document.createElement('button');
         btn.textContent = holz.holzname;
+        btn.className = 'holz-button';
         btn.onclick = () => {
           ausgewaehlteHolzart = holz;
           zeigeStaerken(holz);
@@ -85,6 +152,7 @@
       holz.stärken.forEach(s => {
         const btn = document.createElement('button');
         btn.textContent = s.mm + ' mm';
+        btn.className = 'holz-button';
         btn.onclick = () => {
           auswahl.push({
             holzname: holz.holzname,
@@ -141,57 +209,26 @@
 
       document.getElementById('gesamtflaeche').textContent = `Gesamtfläche: ${gesamt.toFixed(3)} m²`;
     }
-    function sortieren() {
-    const zusammengefasst = {};
-    auswahl.forEach(e => {
-      const key = `${e.artikelnummer}_${e.staerke}`;
-      if (!zusammengefasst[key]) {
-        zusammengefasst[key] = {
-          artikelnummer: e.artikelnummer,
-          holzname: e.holzname,
-          staerke: e.staerke,
-          breite: '',
-          laenge: '',
-          m2: 0
-        };
-    }
-    zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
-  });
-  auswahl = Object.values(zusammengefasst);
-  speichereUndAktualisiere();
-}
 
-    // function sortieren() {
-    //   const zusammengefasst = {};
-    //   auswahl.forEach(e => {
-    //     const key = `${e.artikelnummer}_${e.staerke}`;
-    //     if (!zusammengefasst[key]) {
-    //       zusammengefasst[key] = { ...e, breite: '', laenge: '', m2: 0 };
-    //     }
-    //     zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
-    //   });
-    //   auswahl = Object.values(zusammengefasst);
-    //   speichereUndAktualisiere();
-    // }
     function sortieren() {
-  const zusammengefasst = {};
-  auswahl.forEach(e => {
-    const key = `${e.artikelnummer}_${e.staerke}`;
-    if (!zusammengefasst[key]) {
-      zusammengefasst[key] = {
-        artikelnummer: e.artikelnummer,
-        holzname: e.holzname,
-        staerke: e.staerke,
-        breite: '',
-        laenge: '',
-        m2: 0
-      };
+      const zusammengefasst = {};
+      auswahl.forEach(e => {
+        const key = `${e.artikelnummer}_${e.staerke}`;
+        if (!zusammengefasst[key]) {
+          zusammengefasst[key] = {
+            artikelnummer: e.artikelnummer,
+            holzname: e.holzname,
+            staerke: e.staerke,
+            breite: '',
+            laenge: '',
+            m2: 0
+          };
+        }
+        zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+      });
+      auswahl = Object.values(zusammengefasst);
+      speichereUndAktualisiere();
     }
-    zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
-  });
-  auswahl = Object.values(zusammengefasst);
-  speichereUndAktualisiere();
-}
 
     function zurueck() {
       window.location.href = 'index.html';
@@ -208,22 +245,17 @@
       }
     }
 
-    // Funktion zum Erstellen eines PDF-Dokuments
     function tabelleAlsPDF() {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
-      
-      // Tabellenüberschrift
       doc.setFontSize(12);
       doc.text('Inventur – Holzreste', 14, 10);
-      doc.autoTable({ 
-        html: '#tabelle', 
-        startY: 20, 
+      doc.autoTable({
+        html: '#tabelle',
+        startY: 20,
         theme: 'grid',
         headStyles: { fillColor: [0, 0, 0] }
       });
-      
-      // PDF speichern
       doc.save('holzreste_inventur.pdf');
     }
 
