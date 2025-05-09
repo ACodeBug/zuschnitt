@@ -1,28 +1,48 @@
 [
     {
-      "holzname": "Spanplatte Roh",
-      "artikelnummer": "SP001",
+      "holzname": "Span roh",
       "stärken": [
-        { "mm": 8, "preisProM2": 4.75 },
-        { "mm": 16, "preisProM2": 5.10 },
-        { "mm": 18, "preisProM2": 5.40 }
+        { "mm": 8, "ArtNr" : 432400 ,"preisProM2": 13.49 },
+        { "mm": 10, "ArtNr" : 423661 ,"preisProM2": 15.49 },
+        { "mm": 12, "ArtNr" : 423662 ,"preisProM2": 16.99 },
+        { "mm": 16, "ArtNr" : 423663 ,"preisProM2": 17.99 },
+        { "mm": 19, "ArtNr" : 423664 ,"preisProM2": 20.99 },
+        { "mm": 22, "ArtNr" : 435425 ,"preisProM2": 26.99 }
       ]
     },
     {
-      "holzname": "MDF Weiß",
-      "artikelnummer": "MD001",
+      "holzname": "Span weis",
       "stärken": [
-        { "mm": 10, "preisProM2": 6.20 },
-        { "mm": 16, "preisProM2": 6.80 }
+        { "mm": 8, "ArtNr" : 523481 ,"preisProM2": 15.49 },
+        { "mm": 10, "ArtNr" : 523482 ,"preisProM2": 16.49 },
+        { "mm": 12, "ArtNr" : 531611 ,"preisProM2": 18.49 },
+        { "mm": 16, "ArtNr" : 515284 ,"preisProM2": 20.99 },
+        { "mm": 19, "ArtNr" : 523483 ,"preisProM2": 23.99 },
+        { "mm": 22, "ArtNr" : 548541 ,"preisProM2": 25.99 }
       ]
     },
     {
-      "holzname": "Multiplex Birke",
-      "artikelnummer": "MP001",
+      "holzname": "Span Buche",
       "stärken": [
-        { "mm": 12, "preisProM2": 9.80 },
-        { "mm": 18, "preisProM2": 10.50 },
-        { "mm": 24, "preisProM2": 11.20 }
+        { "mm": 16, "ArtNr" : 788480 ,"preisProM2": 27.99 },
+        { "mm": 19, "ArtNr" : 548543 ,"preisProM2": 29.99 }
+      ]
+    },
+    {
+      "holzname": "Span Ahorn",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 788621 ,"preisProM2": 27.99 },
+        { "mm": 19, "ArtNr" : 548554 ,"preisProM2": 29.99 }
+      ]
+    },
+    {
+      "holzname": "SSperrholz Buche",
+      "stärken": [
+        { "mm": 4, "ArtNr" : 509632 ,"preisProM2": 29.99 },
+        { "mm": 6, "ArtNr" : 509633 ,"preisProM2": 37.99 },
+        { "mm": 8, "ArtNr" : 509634 ,"preisProM2": 39.99 },
+        { "mm": 10, "ArtNr" : 509635 ,"preisProM2": 44.99 },
+        { "mm": 12, "ArtNr" : 548526 ,"preisProM2": 49.99 }
       ]
     }
   ]

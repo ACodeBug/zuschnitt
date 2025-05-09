@@ -87,9 +87,9 @@
         btn.textContent = s.mm + ' mm';
         btn.onclick = () => {
           auswahl.push({
-            artikelnummer: holz.artikelnummer,
             holzname: holz.holzname,
             staerke: s.mm,
+            artikelnummer: s.ArtNr,
             breite: '',
             laenge: '',
             m2: 0
@@ -141,19 +141,57 @@
 
       document.getElementById('gesamtflaeche').textContent = `Gesamtfläche: ${gesamt.toFixed(3)} m²`;
     }
-
     function sortieren() {
-      const zusammengefasst = {};
-      auswahl.forEach(e => {
-        const key = `${e.artikelnummer}_${e.staerke}`;
-        if (!zusammengefasst[key]) {
-          zusammengefasst[key] = { ...e, breite: '', laenge: '', m2: 0 };
-        }
-        zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
-      });
-      auswahl = Object.values(zusammengefasst);
-      speichereUndAktualisiere();
+    const zusammengefasst = {};
+    auswahl.forEach(e => {
+      const key = `${e.artikelnummer}_${e.staerke}`;
+      if (!zusammengefasst[key]) {
+        zusammengefasst[key] = {
+          artikelnummer: e.artikelnummer,
+          holzname: e.holzname,
+          staerke: e.staerke,
+          breite: '',
+          laenge: '',
+          m2: 0
+        };
     }
+    zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+  });
+  auswahl = Object.values(zusammengefasst);
+  speichereUndAktualisiere();
+}
+
+    // function sortieren() {
+    //   const zusammengefasst = {};
+    //   auswahl.forEach(e => {
+    //     const key = `${e.artikelnummer}_${e.staerke}`;
+    //     if (!zusammengefasst[key]) {
+    //       zusammengefasst[key] = { ...e, breite: '', laenge: '', m2: 0 };
+    //     }
+    //     zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+    //   });
+    //   auswahl = Object.values(zusammengefasst);
+    //   speichereUndAktualisiere();
+    // }
+    function sortieren() {
+  const zusammengefasst = {};
+  auswahl.forEach(e => {
+    const key = `${e.artikelnummer}_${e.staerke}`;
+    if (!zusammengefasst[key]) {
+      zusammengefasst[key] = {
+        artikelnummer: e.artikelnummer,
+        holzname: e.holzname,
+        staerke: e.staerke,
+        breite: '',
+        laenge: '',
+        m2: 0
+      };
+    }
+    zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+  });
+  auswahl = Object.values(zusammengefasst);
+  speichereUndAktualisiere();
+}
 
     function zurueck() {
       window.location.href = 'index.html';

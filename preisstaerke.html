@@ -24,7 +24,6 @@
 
     const holzname = getParam('holzname'); // Holt sich den Parameter 'holzname' aus der URL
 
-    // Funktion zum Laden der Holzart-Daten aus der JSON-Datei
     async function ladeStaerken() {
       const container = document.getElementById('stärken-container');
       container.innerHTML = ''; // Container leeren
@@ -33,35 +32,36 @@
         const response = await fetch('preise.json');
         const holzDaten = await response.json();
 
-        // Holzart suchen und Plattenstärken anzeigen
         const holzArt = holzDaten.find(holz => holz.holzname === holzname);
 
         if (holzArt) {
           holzArt.stärken.forEach(staerke => {
             const button = document.createElement('button');
-            button.textContent = `${staerke.mm} mm`;
+            button.textContent = `${staerke.mm} mm – ${staerke.preisProM2.toFixed(2)} €/m²`;
             button.onclick = () => {
-              window.location.href = `preisberechnung.html?holzname=${encodeURIComponent(holzArt.holzname)}&staerke=${staerke.mm}&preis=${staerke.preisProM2}&artnr=${encodeURIComponent(holzArt.artikelnummer)}`;
+              const url = `preisberechnung.html?holzname=${encodeURIComponent(holzArt.holzname)}&staerke=${staerke.mm}&preis=${staerke.preisProM2}&artnr=${staerke.ArtNr}`;
+              window.location.href = url;
             };
             container.appendChild(button);
           });
         } else {
-          container.innerHTML = 'Keine Daten für diese Holzart gefunden.';
+          container.innerHTML = '❌ Keine Daten für diese Holzart gefunden.';
         }
       } catch (error) {
-        container.innerHTML = 'Fehler beim Laden der Holzarten-Daten.';
+        container.innerHTML = '❌ Fehler beim Laden der Holzarten-Daten.';
         console.error(error);
       }
     }
 
     function zurueck() {
-      window.location.href = 'fall1.html'; // Zurück zur Holzart-Auswahl
-    }
-    function home() {
-      window.location.href = 'index.html'; // Zurück zur Holzart-Auswahl
+      window.location.href = 'fall1.html';
     }
 
-    // Lade die Stärke-Buttons, wenn die Seite geladen wird
+    function home() {
+      window.location.href = 'index.html';
+    }
+
+    // Lade bei Start die verfügbaren Stärken
     ladeStaerken();
   </script>
 </body>
