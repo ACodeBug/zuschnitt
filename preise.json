@@ -36,13 +36,209 @@
       ]
     },
     {
-      "holzname": "SSperrholz Buche",
+      "holzname": "Sperrholz Buche",
       "stärken": [
         { "mm": 4, "ArtNr" : 509632 ,"preisProM2": 29.99 },
         { "mm": 6, "ArtNr" : 509633 ,"preisProM2": 37.99 },
         { "mm": 8, "ArtNr" : 509634 ,"preisProM2": 39.99 },
         { "mm": 10, "ArtNr" : 509635 ,"preisProM2": 44.99 },
         { "mm": 12, "ArtNr" : 548526 ,"preisProM2": 49.99 }
+      ]
+    },
+    {
+      "holzname": "MDF roh",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 523479 ,"preisProM2": 4.99 },
+        { "mm": 5, "ArtNr" : 548521 ,"preisProM2": 7.99 },
+        { "mm": 8, "ArtNr" : 548895 ,"preisProM2": 16.99 },
+        { "mm": 10, "ArtNr" : 548896 ,"preisProM2": 19.99 },
+        { "mm": 12, "ArtNr" : 523475 ,"preisProM2": 20.99 },
+        { "mm": 16, "ArtNr" : 523476 ,"preisProM2": 24.99 },
+        { "mm": 18, "ArtNr" : 249794 ,"preisProM2": 29.99 },
+        { "mm": 22, "ArtNr" : 523477 ,"preisProM2": 34.99 }
+      ]
+    },
+    {
+      "holzname": "MDF weiss",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 523480 ,"preisProM2": 6.99 },
+        { "mm": 5, "ArtNr" : 548523 ,"preisProM2": 13.49 }
+      ]
+    },
+    {
+      "holzname": "MDF Ahorn",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 548513 ,"preisProM2": 11.99 }
+      ]
+    },
+    {
+      "holzname": "MDF Buche",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 548514 ,"preisProM2": 11.99 }
+      ]
+    },
+    {
+      "holzname": "Lochplatte weiss",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 548524 ,"preisProM2": 31.99 }
+      ]
+    },
+    {
+      "holzname": "Seekiefer",
+      "stärken": [
+        { "mm": 12, "ArtNr" : 788443 ,"preisProM2": 34.99 },
+        { "mm": 15, "ArtNr" : 788551 ,"preisProM2": 39.99 },
+        { "mm": 18, "ArtNr" : 788552 ,"preisProM2": 44.99 }
+      ]
+    },
+    {
+      "holzname": "Kiefer",
+      "stärken": [
+        { "mm": 4, "ArtNr" : 434780 ,"preisProM2": 26.99 },
+        { "mm": 6, "ArtNr" : 434781 ,"preisProM2": 29.99 },
+        { "mm": 8, "ArtNr" : 434782 ,"preisProM2": 49.99 },
+        { "mm": 10, "ArtNr" : 432783 ,"preisProM2": 39.99 }
+      ]
+    },
+    {
+      "holzname": "PVC Simopor w",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 835809 ,"preisProM2": 22.99 }
+      ]
+    },
+    {
+      "holzname": "TiPl Birke / Erle",
+      "stärken": [
+        { "mm": 13, "ArtNr" : 788586 ,"preisProM2": 58.99 },
+        { "mm": 16, "ArtNr" : 563659 ,"preisProM2": 61.99 },
+        { "mm": 18, "ArtNr" : 563660 ,"preisProM2": 66.99 },
+        { "mm": 22, "ArtNr" : 555261 ,"preisProM2": 69.99 }
+      ]
+    }
+    ,
+    {
+      "holzname": "Sperrholz",
+      "stärken": [
+        { "mm": 4, "ArtNr" : 509615 ,"preisProM2": 24.99 },
+        { "mm": 6, "ArtNr" : 509616 ,"preisProM2": 26.99 },
+        { "mm": 8, "ArtNr" : 509617 ,"preisProM2": 32.99 },
+        { "mm": 10, "ArtNr" : 509618 ,"preisProM2": 38.99 },
+        { "mm": 12, "ArtNr" : 788527 ,"preisProM2": 44.99 }
+      ]
+    },
+    {
+      "holzname": "Schalungsplatte",
+      "stärken": [
+        { "mm": 4, "ArtNr" : 788582 ,"preisProM2": 32.99 }
+      ]
+    },
+    {
+      "holzname": "Siebdruck",
+      "stärken": [
+        { "mm": 9, "ArtNr" : 293109 ,"preisProM2": 49.99 },
+        { "mm": 12, "ArtNr" : 293110 ,"preisProM2": 59.99 },
+        { "mm": 15, "ArtNr" : 293111 ,"preisProM2": 66.99 },
+        { "mm": 18, "ArtNr" : 293112 ,"preisProM2": 73.99 },
+        { "mm": 21, "ArtNr" : 293121 ,"preisProM2": 84.99 },
+        { "mm": 24, "ArtNr" : 293122 ,"preisProM2": 96.99 }
+      ]
+    },{
+      "holzname": "Fil / Film",
+      "stärken": [
+        { "mm": 21, "ArtNr" : 840662 ,"preisProM2": 79.99 }
+      ]
+    },{
+      "holzname": "Multiplex",
+      "stärken": [
+        { "mm": 4, "ArtNr" : 293125 ,"preisProM2": 35.99 },
+        { "mm": 6.5, "ArtNr" : 293126 ,"preisProM2": 41.99 },
+        { "mm": 9, "ArtNr" : 293127 ,"preisProM2": 45.99 },
+        { "mm": 12, "ArtNr" : 293128 ,"preisProM2": 51.99 },
+        { "mm": 15, "ArtNr" : 293129 ,"preisProM2": 61.99 },
+        { "mm": 18, "ArtNr" : 293130 ,"preisProM2": 71.99 },
+        { "mm": 21, "ArtNr" : 293131 ,"preisProM2": 85.99 },
+        { "mm": 24, "ArtNr" : 293132 ,"preisProM2": 114.99 },
+        { "mm": 27, "ArtNr" : 788537 ,"preisProM2": 99.99 },
+        { "mm": 30, "ArtNr" : 788472 ,"preisProM2": 104.99 },
+        { "mm": 40, "ArtNr" : 788597 ,"preisProM2": 107.99 }
+      ]
+    },
+    {
+      "holzname": "Dämmplatte",
+      "stärken": [
+        { "mm": 12, "ArtNr" : 548525 ,"preisProM2": 8.99 }
+      ]
+    },
+    {
+      "holzname": "Bauplatte alu",
+      "stärken": [
+        { "mm": 3, "ArtNr" : 236898 ,"preisProM2": 79.99 }
+      ]
+    },
+    {
+      "holzname": "Bauplatte weiß",
+      "stärken": [
+        { "mm": 6, "ArtNr" : 278317 ,"preisProM2": 68.99 }
+      ]
+    },
+    {
+      "holzname": "Bauplatte braun",
+      "stärken": [
+        { "mm": 6, "ArtNr" : 278319 ,"preisProM2": 68.99 }
+      ]
+    },
+    {
+      "holzname": "Bauplatte anthr.",
+      "stärken": [
+        { "mm": 6, "ArtNr" : 278318 ,"preisProM2": 68.99 }
+      ]
+    },
+    {
+      "holzname": "Bauplatte lichtgr.",
+      "stärken": [
+        { "mm": 6, "ArtNr" : 278320 ,"preisProM2": 68.99 }
+      ]
+    },
+    {
+      "holzname": "Leimholz Fichte",
+      "stärken": [
+        { "mm": 18, "ArtNr" : 509638 ,"preisProM2": 79.99 },
+        { "mm": 27, "ArtNr" : 509639 ,"preisProM2": 99.99 }
+      ]
+    },
+    {
+      "holzname": "Leimholz Kiefer",
+      "stärken": [
+        { "mm": 18, "ArtNr" : 548535 ,"preisProM2": 81.99 },
+        { "mm": 27, "ArtNr" : 788662 ,"preisProM2": 65.99 }
+      ]
+    },
+    {
+      "holzname": "Leimholz Buche",
+      "stärken": [
+        { "mm": 18, "ArtNr" : 548536 ,"preisProM2": 99.99 },
+        { "mm": 27, "ArtNr" : 788677 ,"preisProM2": 119.99 },
+        { "mm": 40, "ArtNr" : 788678 ,"preisProM2": 94.99 }
+      ]
+    },
+    {
+      "holzname": "OSB",
+      "stärken": [
+        { "mm": 9, "ArtNr" : 555079 ,"preisProM2": 17.49 },
+        { "mm": 12, "ArtNr" : 523472 ,"preisProM2": 19.99 },
+        { "mm": 15, "ArtNr" : 523473 ,"preisProM2": 22.99 },
+        { "mm": 18, "ArtNr" : 523474 ,"preisProM2": 24.99 },
+        { "mm": 22, "ArtNr" : 788581 ,"preisProM2": 34.99 }
+      ]
+    },
+    {
+      "holzname": "Vollholz 3-Schicht",
+      "stärken": [
+        { "mm": 13, "ArtNr" : 807864 ,"preisProM2": 69.99 },
+        { "mm": 16, "ArtNr" : 807865 ,"preisProM2": 74.99 },
+        { "mm": 19, "ArtNr" : 788670 ,"preisProM2": 75.99 },
+        { "mm": 22, "ArtNr" : 807866 ,"preisProM2": 79.99 },
+        { "mm": 27, "ArtNr" : 788604 ,"preisProM2": 81.99 }
       ]
     }
   ]
