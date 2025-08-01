@@ -11,7 +11,7 @@
       ]
     },
     {
-      "holzname": "Span weis",
+      "holzname": "Span weiß",
       "stärken": [
         { "mm": 8, "ArtNr" : 523481 ,"preisProM2": 15.49 },
         { "mm": 10, "ArtNr" : 523482 ,"preisProM2": 16.49 },
@@ -24,15 +24,15 @@
     {
       "holzname": "Span Buche",
       "stärken": [
-        { "mm": 16, "ArtNr" : 788480 ,"preisProM2": 27.99 },
-        { "mm": 19, "ArtNr" : 548543 ,"preisProM2": 29.99 }
+        { "mm": 16, "ArtNr" : 788480 ,"preisProM2": 28.99 },
+        { "mm": 19, "ArtNr" : 548543 ,"preisProM2": 31.99 }
       ]
     },
     {
       "holzname": "Span Ahorn",
       "stärken": [
-        { "mm": 16, "ArtNr" : 788621 ,"preisProM2": 27.99 },
-        { "mm": 19, "ArtNr" : 548554 ,"preisProM2": 29.99 }
+        { "mm": 16, "ArtNr" : 788621 ,"preisProM2": 28.99 },
+        { "mm": 19, "ArtNr" : 548554 ,"preisProM2": 31.99 }
       ]
     },
     {
@@ -54,12 +54,12 @@
         { "mm": 10, "ArtNr" : 548896 ,"preisProM2": 19.99 },
         { "mm": 12, "ArtNr" : 523475 ,"preisProM2": 20.99 },
         { "mm": 16, "ArtNr" : 523476 ,"preisProM2": 24.99 },
-        { "mm": 18, "ArtNr" : 249794 ,"preisProM2": 29.99 },
+        { "mm": 18, "ArtNr" : 249794 ,"preisProM2": 31.99 },
         { "mm": 22, "ArtNr" : 523477 ,"preisProM2": 34.99 }
       ]
     },
     {
-      "holzname": "MDF weiss",
+      "holzname": "MDF weiß",
       "stärken": [
         { "mm": 3, "ArtNr" : 523480 ,"preisProM2": 7.29 },
         { "mm": 5, "ArtNr" : 548523 ,"preisProM2": 13.49 }
@@ -68,13 +68,13 @@
     {
       "holzname": "MDF Ahorn",
       "stärken": [
-        { "mm": 3, "ArtNr" : 548513 ,"preisProM2": 11.99 }
+        { "mm": 3, "ArtNr" : 548513 ,"preisProM2": 12.49 }
       ]
     },
     {
       "holzname": "MDF Buche",
       "stärken": [
-        { "mm": 3, "ArtNr" : 548514 ,"preisProM2": 11.99 }
+        { "mm": 3, "ArtNr" : 548514 ,"preisProM2": 12.49 }
       ]
     },
     {
@@ -109,10 +109,10 @@
     {
       "holzname": "TiPl Birke / Erle",
       "stärken": [
-        { "mm": 13, "ArtNr" : 788586 ,"preisProM2": 58.99 },
-        { "mm": 16, "ArtNr" : 563659 ,"preisProM2": 61.99 },
-        { "mm": 18, "ArtNr" : 563660 ,"preisProM2": 66.99 },
-        { "mm": 22, "ArtNr" : 555261 ,"preisProM2": 69.99 }
+        { "mm": 13, "ArtNr" : 788586 ,"preisProM2": 61.99 },
+        { "mm": 16, "ArtNr" : 563659 ,"preisProM2": 62.99 },
+        { "mm": 18, "ArtNr" : 563660 ,"preisProM2": 69.99 },
+        { "mm": 22, "ArtNr" : 555261 ,"preisProM2": 71.99 }
       ]
     }
     ,
@@ -225,7 +225,7 @@
       "holzname": "OSB",
       "stärken": [
         { "mm": 9, "ArtNr" : 555079 ,"preisProM2": 17.49 },
-        { "mm": 12, "ArtNr" : 523472 ,"preisProM2": 19.99 },
+        { "mm": 12, "ArtNr" : 523472 ,"preisProM2": 19.49 },
         { "mm": 15, "ArtNr" : 523473 ,"preisProM2": 22.99 },
         { "mm": 18, "ArtNr" : 523474 ,"preisProM2": 24.99 },
         { "mm": 22, "ArtNr" : 788581 ,"preisProM2": 34.99 }
@@ -243,3 +243,4 @@
     }
   ]
   
+
