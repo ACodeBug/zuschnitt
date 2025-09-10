@@ -31,6 +31,7 @@ select { padding: 6px; }
     <select id="staerkeSelect"></select>
   </label>
   <button onclick="holzHinzufuegen()">➕ Hinzufügen</button>
+  <button class="home-button" onclick="home()">🏠 Heim</button>
 </div>
 
 <div style="margin-bottom: 15px;">
@@ -192,7 +193,6 @@ function berechne() {
     summary[key].preis += m2*preis;
   });
 
-  // Zusammenfassungstabelle füllen
   const tbodySum = document.getElementById('zusammenfassung-body');
   tbodySum.innerHTML = '';
   Object.values(summary).forEach(s => {
@@ -205,33 +205,94 @@ function berechne() {
     `Gesamtfläche: ${gesamtM2.toFixed(2)} m² | Gesamtpreis: ${gesamtPreis.toFixed(2)} €`;
 }
 
-// E-Mail vorbereiten Funktion
+function exportierePDF() {
+  const doc = new jsPDF();
+  const kunde = document.getElementById('kundeName').value || '-';
+  const telefon = document.getElementById('kundeTelefon').value || '-';
+  const bestellId = 'ID-' + Math.floor(Math.random() * 1000000);
+
+  doc.setFontSize(16);
+  doc.text('Holzzuschnitt Bestellung', 105, 15, { align: 'center' });
+  doc.setFontSize(12);
+  doc.text(`Bestellungs-ID: ${bestellId}`, 10, 30);
+  doc.text(`Kunde: ${kunde}`, 10, 37);
+  doc.text(`Telefon: ${telefon}`, 10, 44);
+
+  let startY = 55;
+  const detailRows = [];
+  document.querySelectorAll('#tabelle-body tr').forEach(row => {
+    const cells = [];
+    cells.push(row.cells[0].textContent);
+    cells.push(row.cells[1].textContent);
+    cells.push(row.cells[2].textContent);
+    cells.push(row.cells[3].textContent);
+    cells.push(row.cells[4].textContent);
+    const inputs = row.querySelectorAll('input');
+    cells.push(inputs[0].value);
+    cells.push(inputs[1].value);
+    cells.push(inputs[2].value);
+    cells.push(row.querySelector('.m2-zelle').textContent);
+    detailRows.push(cells);
+  });
+
+  doc.autoTable({
+    head: [['Nr', 'Holzart', 'Stärke', 'Art.-Nr.', 'Preis/m²', 'Länge', 'Breite', 'Stück', 'm²']],
+    body: detailRows,
+    startY: startY,
+    theme: 'grid',
+    headStyles: { fillColor: [52, 152, 219], textColor: 255, fontStyle: 'bold' },
+    styles: { fontSize: 10 },
+    margin: { left: 10, right: 10 }
+  });
+
+  const summaryRows = [];
+  document.querySelectorAll('#zusammenfassung-body tr').forEach(row => {
+    const cells = Array.from(row.cells).map(c => c.textContent);
+    summaryRows.push(cells);
+  });
+
+  doc.autoTable({
+    head: [['Holzart', 'Art.-Nr.', 'Stärke', 'Gesamtfläche', 'Preis']],
+    body: summaryRows,
+    startY: doc.lastAutoTable.finalY + 15,
+    theme: 'grid',
+    headStyles: { fillColor: [46, 204, 113], textColor: 255, fontStyle: 'bold' },
+    styles: { fontSize: 10 },
+    margin: { left: 10, right: 10 }
+  });
+
+  // Hinweis für Mitarbeiterprüfung
+  doc.setFontSize(10);
+  doc.setTextColor(200,0,0);
+  doc.text('Hinweis: Alle Angaben müssen noch durch Mitarbeiter geprüft werden.', 10, doc.lastAutoTable.finalY + 15);
+
+  doc.save(`Bestellung_${bestellId}.pdf`);
+}
+
+// Neue Funktion für E-Mail-Vorbereitung
 function vorbereiteEmail() {
   const kunde = document.getElementById('kundeName').value || '-';
   const telefon = document.getElementById('kundeTelefon').value || '-';
-  const bestellId = 'ID-' + Math.floor(Math.random()*1000000);
+  const bestellId = 'ID-' + Math.floor(Math.random() * 1000000);
 
-  let mailText = `Bestellungs-ID: ${bestellId}\nKunde: ${kunde}\nTelefon: ${telefon}\n\n`;
-  mailText += 'Detailtabelle:\n';
+  let emailText = `Holzzuschnitt Bestellung\nBestellungs-ID: ${bestellId}\nKunde: ${kunde}\nTelefon: ${telefon}\n\n--- Detailtabelle ---\n`;
 
   document.querySelectorAll('#tabelle-body tr').forEach(row => {
     const inputs = row.querySelectorAll('input');
-    mailText += `${row.cells[1].textContent} | ${row.cells[2].textContent} mm | ArtNr: ${row.cells[3].textContent} | ${inputs[0].value} x ${inputs[1].value} cm | Stück: ${inputs[2].value} | m²: ${row.querySelector('.m2-zelle').textContent} | Preis/m²: ${row.cells[4].textContent}\n`;
+    emailText += `Nr: ${row.cells[0].textContent} | Holz: ${row.cells[1].textContent} | Stärke: ${row.cells[2].textContent} | ArtNr: ${row.cells[3].textContent} | Preis/m²: ${row.cells[4].textContent} | Länge: ${inputs[0].value} | Breite: ${inputs[1].value} | Stück: ${inputs[2].value} | m²: ${row.querySelector('.m2-zelle').textContent}\n`;
   });
 
-  mailText += '\nZwischensummen:\n';
+  emailText += `\n--- Zwischensummen ---\n`;
   document.querySelectorAll('#zusammenfassung-body tr').forEach(row => {
-    mailText += `${row.cells[0].textContent} | ${row.cells[1].textContent} | ${row.cells[2].textContent} mm | ${row.cells[3].textContent} m² | ${row.cells[4].textContent} €\n`;
+    emailText += `Holz: ${row.cells[0].textContent} | ArtNr: ${row.cells[1].textContent} | Stärke: ${row.cells[2].textContent} | Gesamtfläche: ${row.cells[3].textContent} | Preis: ${row.cells[4].textContent}\n`;
   });
 
-  const gesamt = document.getElementById('ergebnis').textContent;
-  mailText += `\n${gesamt}`;
+  emailText += `\nHinweis: Alle Angaben müssen noch durch Mitarbeiter geprüft werden.\n`;
 
-  // Mailto vorbereiten, Kunde muss nur noch senden
-  const mailtoLink = `mailto:?subject=Holzbestellung ${bestellId}&body=${encodeURIComponent(mailText)}`;
+  const mailtoLink = `mailto:?subject=Holzzuschnitt Bestellung ${bestellId}&body=${encodeURIComponent(emailText)}`;
   window.location.href = mailtoLink;
 }
-
+function home() { window.location.href = 'index.html'; }
 ladeHolzarten();
 </script>
 </body>
