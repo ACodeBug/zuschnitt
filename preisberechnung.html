@@ -78,7 +78,7 @@ select { padding: 6px; }
 
 <button onclick="berechne()">✅ Berechnen</button>
 <button onclick="exportierePDF()">📄 Exportieren als PDF</button>
-<button onclick="vorbereiteEmail()">✉️ E-Mail vorbereiten</button>
+<button onclick="vorbereiteEmail()" style="background-color:#27ae60; color:white; padding:8px 12px; border:none; cursor:pointer;">✉️ E-Mail vorbereiten</button>
 
 <h3 id="ergebnis"></h3>
 
@@ -289,7 +289,7 @@ function vorbereiteEmail() {
 
   emailText += `\nHinweis: Alle Angaben müssen noch durch Mitarbeiter geprüft werden.\n`;
 
-  const mailtoLink = `mailto:?subject=Holzzuschnitt Bestellung ${bestellId}&body=${encodeURIComponent(emailText)}`;
+  const mailtoLink = `mailto:verkauf@meinefirma.de?subject=Holzzuschnitt Bestellung ${bestellId}&body=${encodeURIComponent(emailText)}`;
   window.location.href = mailtoLink;
 }
 function home() { window.location.href = 'index.html'; }
