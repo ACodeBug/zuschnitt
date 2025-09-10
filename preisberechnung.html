@@ -1,151 +1,238 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preisberechnung mit fortlaufenden Nummern</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <style>
-    body { font-family: sans-serif; padding: 20px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
-    input[type="number"] { width: 80px; }
-    button { margin: 5px; padding: 8px 12px; }
-    .info-label { font-weight: bold; }
-    .loeschen-button { background-color: #e74c3c; color: white; border: none; cursor: pointer; padding: 4px 8px; }
-    .loeschen-button:hover { background-color: #c0392b; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preisberechnung – mehrere Holzarten</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<style>
+body { font-family: sans-serif; padding: 20px; }
+table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+th, td { border: 1px solid #aaa; padding: 8px; text-align: center; }
+input[type="number"], input[type="text"] { width: 80px; }
+button { margin: 5px; padding: 8px 12px; }
+select { padding: 6px; }
+.loeschen-button { background-color: #e74c3c; color: white; border: none; cursor: pointer; padding: 4px 8px; }
+.loeschen-button:hover { background-color: #c0392b; }
+#searchField { margin-bottom: 10px; padding: 6px; width: 200px; }
+</style>
 </head>
 <body>
-  <h1>Preisberechnung</h1>
+<h1>Preisberechnung – Holzarten</h1>
 
-  <div>
-    <p><span class="info-label">Holzart:</span> <span id="holzname"></span></p>
-    <p><span class="info-label">Stärke:</span> <span id="staerke"></span> mm</p>
-    <p><span class="info-label">Art.-Nr.:</span> <span id="artnr"></span></p>
-    <p><span class="info-label">Preis pro m²:</span> <span id="preis"></span> €</p>
-  </div>
+<div>
+  <label>Suche: <input type="text" id="searchField" placeholder="Holzart suchen..." oninput="filterHolz()"></label>
+  <br><br>
+  <label>Holzart:
+    <select id="holzSelect"></select>
+  </label>
+  <label>Stärke (mm):
+    <select id="staerkeSelect"></select>
+  </label>
+  <button onclick="holzHinzufuegen()">➕ Hinzufügen</button>
+</div>
 
-  <table id="input-tabelle">
-    <thead>
-      <tr>
-        <th>Nr.</th>
-        <th>Länge (cm)</th>
-        <th>Breite (cm)</th>
-        <th>Stück</th>
-        <th>m²</th>
-        <th>Aktion</th>
-      </tr>
-    </thead>
-    <tbody id="tabelle-body">
-      <!-- Dynamische Zeilen -->
-    </tbody>
-  </table>
+<div style="margin-bottom: 15px;">
+  <label style="margin-right: 20px;">Kunde Name: 
+    <input type="text" id="kundeName" style="width: 300px; padding: 6px;">
+  </label>
+  <label>Telefon: 
+    <input type="text" id="kundeTelefon" style="width: 200px; padding: 6px;">
+  </label>
+</div>
 
-  <button onclick="zeileHinzufuegen()">➕ Neue Zeile</button>
-  <button onclick="berechne()">✅ Berechnen</button>
-  <button onclick="zurueck()">⬅️ Holzart wählen</button>
-  <button onclick="home()">🏠 Heim</button>
-  <button onclick="exportierePDF()">📄 Exportieren als PDF</button>
+<h2>Detailtabelle</h2>
+<table id="input-tabelle">
+<thead>
+<tr>
+<th>Nr.</th>
+<th>Holzart</th>
+<th>Stärke (mm)</th>
+<th>Art.-Nr.</th>
+<th>Preis/m²</th>
+<th>Länge (cm)</th>
+<th>Breite (cm)</th>
+<th>Stück</th>
+<th>m²</th>
+<th>Aktion</th>
+</tr>
+</thead>
+<tbody id="tabelle-body"></tbody>
+</table>
 
-  <h3 id="ergebnis"></h3>
+<h2>Zwischensummen pro Holzart/Stärke</h2>
+<table id="zusammenfassung-tabelle">
+<thead>
+<tr>
+<th>Holzart</th>
+<th>Art.-Nr.</th>
+<th>Stärke (mm)</th>
+<th>Gesamtfläche (m²)</th>
+<th>Preis (€)</th>
+</tr>
+</thead>
+<tbody id="zusammenfassung-body"></tbody>
+</table>
 
-  <script>
-    const { jsPDF } = window.jspdf;
+<button onclick="berechne()">✅ Berechnen</button>
+<button onclick="exportierePDF()">📄 Exportieren als PDF</button>
+<button onclick="vorbereiteEmail()">✉️ E-Mail vorbereiten</button>
 
-    function getParam(name) {
-      return new URLSearchParams(window.location.search).get(name);
-    }
+<h3 id="ergebnis"></h3>
 
-    const holzname = getParam('holzname');
-    const staerke = getParam('staerke');
-    const preis = parseFloat(getParam('preis'));
-    const artnr = getParam('artnr');
+<script>
+const { jsPDF } = window.jspdf;
+let holzDaten = [];
+let aktuellGefilterteHolz = [];
 
-    document.getElementById('holzname').textContent = holzname;
-    document.getElementById('staerke').textContent = staerke;
-    document.getElementById('preis').textContent = preis.toFixed(2);
-    document.getElementById('artnr').textContent = artnr;
+async function ladeHolzarten() {
+  try {
+    const response = await fetch('preise.json');
+    holzDaten = await response.json();
+    aktuellGefilterteHolz = [...holzDaten];
+    updateHolzSelect();
+  } catch(e) { console.error(e); }
+}
 
-    const tbody = document.getElementById('tabelle-body');
+function updateHolzSelect() {
+  const select = document.getElementById('holzSelect');
+  select.innerHTML = '';
+  aktuellGefilterteHolz.forEach(h => {
+    const option = document.createElement('option');
+    option.value = h.holzname;
+    option.textContent = h.holzname;
+    select.appendChild(option);
+  });
+  updateStaerken();
+}
 
-    function zeileHinzufuegen() {
-      const zeile = document.createElement('tr');
+function updateStaerken() {
+  const holzname = document.getElementById('holzSelect').value;
+  const staerkeSelect = document.getElementById('staerkeSelect');
+  staerkeSelect.innerHTML = '';
+  const holz = holzDaten.find(h => h.holzname === holzname);
+  holz.stärken.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.mm;
+    opt.textContent = `${s.mm} mm`;
+    opt.dataset.preis = s.preisProM2;
+    opt.dataset.artnr = s.ArtNr;
+    staerkeSelect.appendChild(opt);
+  });
+}
 
-      zeile.innerHTML = `
-        <td class="zeilenNummer"></td>
-        <td><input type="number" min="0" onchange="updateM2(this)"></td>
-        <td><input type="number" min="0" onchange="updateM2(this)"></td>
-        <td><input type="number" min="1" value="1" onchange="updateM2(this)"></td>
-        <td class="m2-zelle">0.00</td>
-        <td><button class="loeschen-button" onclick="zeileLoeschen(this)">🗑️</button></td>
-      `;
+document.getElementById('holzSelect').addEventListener('change', updateStaerken);
 
-      tbody.appendChild(zeile);
-      nummernAktualisieren();
-    }
+function filterHolz() {
+  const search = document.getElementById('searchField').value.toLowerCase();
+  aktuellGefilterteHolz = holzDaten.filter(h => h.holzname.toLowerCase().includes(search));
+  updateHolzSelect();
+}
 
-    function zeileLoeschen(button) {
-      const row = button.closest('tr');
-      row.remove();
-      nummernAktualisieren();
-    }
+const tbody = document.getElementById('tabelle-body');
 
-    function nummernAktualisieren() {
-      const nummern = document.querySelectorAll('.zeilenNummer');
-      nummern.forEach((zelle, index) => {
-        zelle.textContent = index + 1;
-      });
-    }
+function holzHinzufuegen() {
+  const holzname = document.getElementById('holzSelect').value;
+  const staerkeOpt = document.getElementById('staerkeSelect').selectedOptions[0];
+  const staerke = staerkeOpt.value;
+  const preis = parseFloat(staerkeOpt.dataset.preis);
+  const artnr = staerkeOpt.dataset.artnr;
 
-    function updateM2(elem) {
-      const row = elem.closest('tr');
-      const inputs = row.querySelectorAll('input');
-      const [laenge, breite, stueck] = Array.from(inputs).map(i => parseFloat(i.value) || 0);
-      const m2 = (laenge / 100) * (breite / 100) * stueck;
-      row.querySelector('.m2-zelle').textContent = m2.toFixed(2);
-    }
+  const zeile = document.createElement('tr');
+  zeile.innerHTML = `
+    <td class="zeilenNummer"></td>
+    <td>${holzname}</td>
+    <td>${staerke}</td>
+    <td>${artnr}</td>
+    <td>${preis.toFixed(2)}</td>
+    <td><input type="number" min="0" onchange="updateM2(this)"></td>
+    <td><input type="number" min="0" onchange="updateM2(this)"></td>
+    <td><input type="number" min="1" value="1" onchange="updateM2(this)"></td>
+    <td class="m2-zelle">0.00</td>
+    <td><button class="loeschen-button" onclick="zeileLoeschen(this)">🗑️</button></td>
+  `;
+  tbody.appendChild(zeile);
+  nummernAktualisieren();
+}
 
-    function berechne() {
-      let gesamtM2 = 0;
-      const m2Zellen = document.querySelectorAll('.m2-zelle');
-      m2Zellen.forEach(zelle => gesamtM2 += parseFloat(zelle.textContent));
-      const gesamtPreis = gesamtM2 * preis;
+function zeileLoeschen(button) {
+  button.closest('tr').remove();
+  nummernAktualisieren();
+}
 
-      document.getElementById('ergebnis').textContent =
-        `Gesamtfläche: ${gesamtM2.toFixed(2)} m² | Gesamtpreis: ${gesamtPreis.toFixed(2)} €`;
-    }
+function nummernAktualisieren() {
+  document.querySelectorAll('.zeilenNummer').forEach((zelle, i) => zelle.textContent = i+1);
+}
 
-    function zurueck() {
-      window.location.href = 'fall1.html';
-    }
-    function home() {
-      window.location.href = 'index.html';
-    }
+function updateM2(elem) {
+  const row = elem.closest('tr');
+  const inputs = row.querySelectorAll('input');
+  const [laenge, breite, stueck] = Array.from(inputs).map(i => parseFloat(i.value)||0);
+  row.querySelector('.m2-zelle').textContent = ((laenge/100)*(breite/100)*stueck).toFixed(2);
+}
 
-    function exportierePDF() {
-      const doc = new jsPDF();
-      doc.text(`Holzart: ${holzname}`, 10, 10);
-      doc.text(`Stärke: ${staerke} mm`, 10, 20);
-      doc.text(`Art.-Nr.: ${artnr}`, 10, 30);
-      doc.text(`Preis pro m²: ${preis.toFixed(2)} €`, 10, 40);
+function berechne() {
+  let gesamtM2 = 0, gesamtPreis = 0;
+  const summary = {};
 
-      let yOffset = 50;
-      const m2Zellen = document.querySelectorAll('.m2-zelle');
-      const zeilen = document.querySelectorAll('.zeilenNummer');
+  document.querySelectorAll('#tabelle-body tr').forEach(row => {
+    const m2 = parseFloat(row.querySelector('.m2-zelle').textContent)||0;
+    const preis = parseFloat(row.cells[4].textContent);
+    const holz = row.cells[1].textContent;
+    const artnr = row.cells[3].textContent;
+    const staerke = row.cells[2].textContent;
 
-      m2Zellen.forEach((zelle, idx) => {
-        const m2 = parseFloat(zelle.textContent).toFixed(2);
-        const nr = zeilen[idx].textContent;
-        doc.text(`Zeile ${nr} - m²: ${m2}`, 10, yOffset);
-        yOffset += 10;
-      });
+    gesamtM2 += m2;
+    gesamtPreis += m2*preis;
 
-      doc.save('Preisberechnung.pdf');
-    }
+    const key = `${holz}_${staerke}`;
+    if (!summary[key]) summary[key] = {holz, artnr, staerke, m2: 0, preis: 0};
+    summary[key].m2 += m2;
+    summary[key].preis += m2*preis;
+  });
 
-    // Erste Zeile automatisch hinzufügen
-    zeileHinzufuegen();
-  </script>
+  // Zusammenfassungstabelle füllen
+  const tbodySum = document.getElementById('zusammenfassung-body');
+  tbodySum.innerHTML = '';
+  Object.values(summary).forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${s.holz}</td><td>${s.artnr}</td><td>${s.staerke}</td><td>${s.m2.toFixed(2)}</td><td>${s.preis.toFixed(2)}</td>`;
+    tbodySum.appendChild(tr);
+  });
+
+  document.getElementById('ergebnis').textContent =
+    `Gesamtfläche: ${gesamtM2.toFixed(2)} m² | Gesamtpreis: ${gesamtPreis.toFixed(2)} €`;
+}
+
+// E-Mail vorbereiten Funktion
+function vorbereiteEmail() {
+  const kunde = document.getElementById('kundeName').value || '-';
+  const telefon = document.getElementById('kundeTelefon').value || '-';
+  const bestellId = 'ID-' + Math.floor(Math.random()*1000000);
+
+  let mailText = `Bestellungs-ID: ${bestellId}\nKunde: ${kunde}\nTelefon: ${telefon}\n\n`;
+  mailText += 'Detailtabelle:\n';
+
+  document.querySelectorAll('#tabelle-body tr').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    mailText += `${row.cells[1].textContent} | ${row.cells[2].textContent} mm | ArtNr: ${row.cells[3].textContent} | ${inputs[0].value} x ${inputs[1].value} cm | Stück: ${inputs[2].value} | m²: ${row.querySelector('.m2-zelle').textContent} | Preis/m²: ${row.cells[4].textContent}\n`;
+  });
+
+  mailText += '\nZwischensummen:\n';
+  document.querySelectorAll('#zusammenfassung-body tr').forEach(row => {
+    mailText += `${row.cells[0].textContent} | ${row.cells[1].textContent} | ${row.cells[2].textContent} mm | ${row.cells[3].textContent} m² | ${row.cells[4].textContent} €\n`;
+  });
+
+  const gesamt = document.getElementById('ergebnis').textContent;
+  mailText += `\n${gesamt}`;
+
+  // Mailto vorbereiten, Kunde muss nur noch senden
+  const mailtoLink = `mailto:?subject=Holzbestellung ${bestellId}&body=${encodeURIComponent(mailText)}`;
+  window.location.href = mailtoLink;
+}
+
+ladeHolzarten();
+</script>
 </body>
 </html>

@@ -5,24 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Preisrechner – Holzarten</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      margin: 0;
-    }
-
-    h1 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
+    body { font-family: sans-serif; padding: 20px; margin: 0; }
+    h1 { margin-bottom: 20px; text-align: center; }
     #holzarten-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 15px;
       margin-bottom: 30px;
     }
-
     .holz-button {
       padding: 14px;
       font-size: 16px;
@@ -33,11 +23,7 @@
       transition: background-color 0.2s;
       width: 100%;
     }
-
-    .holz-button:hover {
-      background-color: #e0e0e0;
-    }
-
+    .holz-button:hover { background-color: #e0e0e0; }
     .home-button {
       display: block;
       margin: 0 auto;
@@ -50,22 +36,7 @@
       cursor: pointer;
       transition: background-color 0.2s;
     }
-
-    .home-button:hover {
-      background-color: #0056b3;
-    }
-
-    @media (max-width: 480px) {
-      .holz-button {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      .home-button {
-        font-size: 16px;
-        padding: 10px 20px;
-      }
-    }
+    .home-button:hover { background-color: #0056b3; }
   </style>
 </head>
 <body>
@@ -86,7 +57,9 @@
           button.className = 'holz-button';
           button.textContent = item.holzname;
           button.onclick = () => {
-            const url = `preisstaerke.html?holzname=${encodeURIComponent(item.holzname)}`;
+            // Die erste Stärke automatisch wählen
+            const ersteStaerke = item.stärken[0];
+            const url = `preisstaerke.html?holzname=${encodeURIComponent(item.holzname)}&preis=${ersteStaerke.preisProM2}&artnr=${ersteStaerke.ArtNr}&staerke=${ersteStaerke.mm}`;
             window.location.href = url;
           };
           container.appendChild(button);
@@ -97,9 +70,7 @@
       }
     }
 
-    function home() {
-      window.location.href = 'index.html';
-    }
+    function home() { window.location.href = 'index.html'; }
 
     ladeHolzarten();
   </script>

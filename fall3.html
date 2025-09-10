@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fall3 – Preise bearbeiten</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  input, button { padding: 5px; margin: 3px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 5px; text-align: center; }
+  th { background-color: #eee; }
+</style>
+</head>
+<body>
+
+<h1>Preise bearbeiten</h1>
+
+<div>
+  <label>Passwort: <input type="password" id="passwort"></label>
+  <button onclick="ladeDaten()">Login & Daten laden</button>
+  <button onclick="zurueck()">🔙 Zurück zur Startseite</button>
+</div>
+
+<div id="editorDiv" style="display:none">
+  <div>
+    <label>Suche: <input type="text" id="suche" oninput="filterTabelle()"></label>
+    <button onclick="neueZeile()">➕ Neuer Artikel</button>
+  </div>
+
+  <table id="preiseTabelle">
+    <thead>
+      <tr>
+        <th>Holzart</th>
+        <th>Stärke (mm)</th>
+        <th>Artikelnummer</th>
+        <th>Preis €/m²</th>
+        <th>Aktion</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <button onclick="speichereDaten()">Speichern</button>
+</div>
+
+<script>
+let daten = [];
+const korrektesPasswort = "1234";
+
+function ladeDaten() {
+  const pw = document.getElementById('passwort').value;
+  if (pw !== korrektesPasswort) {
+    alert("Falsches Passwort!");
+    return;
+  }
+
+  fetch('preise.json')
+    .then(res => res.json())
+    .then(json => {
+      daten = json;
+      zeigeTabelle();
+      document.getElementById('editorDiv').style.display = "block";
+    })
+    .catch(err => alert("Fehler beim Laden der Daten: " + err));
+}
+
+function zeigeTabelle() {
+  const tbody = document.querySelector("#preiseTabelle tbody");
+  tbody.innerHTML = "";
+
+  daten.forEach((holz, i) => {
+    holz.stärken.forEach((s, j) => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td><input type="text" value="${holz.holzname}" onchange="daten[${i}].holzname=this.value"></td>
+        <td><input type="number" value="${s.mm}" onchange="daten[${i}].stärken[${j}].mm=this.value"></td>
+        <td><input type="number" value="${s.ArtNr}" onchange="daten[${i}].stärken[${j}].ArtNr=this.value"></td>
+        <td><input type="number" step="0.01" value="${s.preisProM2}" onchange="daten[${i}].stärken[${j}].preisProM2=this.value"></td>
+        <td><button onclick="entferneZeile(${i}, ${j})">🗑️</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  });
+}
+
+function filterTabelle() {
+  const filter = document.getElementById("suche").value.toLowerCase();
+  const tbody = document.querySelector("#preiseTabelle tbody");
+  const rows = tbody.getElementsByTagName("tr");
+
+  for (let i = 0; i < rows.length; i++) {
+    const zelle = rows[i].getElementsByTagName("input")[0];
+    if (zelle.value.toLowerCase().includes(filter)) {
+      rows[i].style.display = "";
+    } else {
+      rows[i].style.display = "none";
+    }
+  }
+}
+
+function neueZeile() {
+  // Leere Zeile erstellen
+  const neuerHolz = { holzname: "", stärken: [{ mm: 0, ArtNr: 0, preisProM2: 0 }] };
+  daten.push(neuerHolz);
+  zeigeTabelle();
+}
+
+function entferneZeile(i, j) {
+  daten[i].stärken.splice(j, 1);
+  if (daten[i].stärken.length === 0) daten.splice(i, 1);
+  zeigeTabelle();
+}
+
+function zurueck() {
+      window.location.href = 'index.html';
+    }
+
+function speichereDaten() {
+  console.log("Neue Daten:", daten);
+  alert("Daten bearbeitet! (Für echtes Speichern brauchst du ein Server-Backend.)");
+}
+</script>
+
+</body>
+</html>

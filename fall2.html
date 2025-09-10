@@ -5,94 +5,56 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inventur – Holzreste</title>
   <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      margin: 0;
-    }
+    body { font-family: sans-serif; padding: 20px; }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    h1 { margin-bottom: 20px; }
+    h3 { margin-top: 20px; }
 
-    .holzarten, .staerken {
-      margin-bottom: 20px;
-    }
-
-    #holzartenContainer, #staerkenContainer {
+    /* Button-Grid Layout */
+    .button-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 10px;
+      margin-bottom: 15px;
     }
 
-    .holz-button {
-      padding: 14px;
-      font-size: 16px;
-      background-color: #f0f0f0;
-      border: 1px solid #aaa;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      width: 100%;
-    }
-
-    .holz-button:hover {
-      background-color: #e0e0e0;
-    }
-
-    table {
-      margin-top: 20px;
-      border-collapse: collapse;
-      width: 100%;
-    }
-
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-    }
-
-    th {
-      background-color: #eee;
-    }
-
-    input[type="number"] {
-      width: 80px;
-    }
-
-    .summe, .aktionen {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    .aktionen button {
-      margin: 5px;
-      padding: 10px 16px;
+    .button-grid button {
+      padding: 10px;
       font-size: 14px;
-      border: none;
+      background: #f0f0f0;
+      border: 1px solid #aaa;
       border-radius: 6px;
-      background-color: #f0f0f0;
       cursor: pointer;
       transition: background-color 0.2s;
     }
 
-    .aktionen button:hover {
-      background-color: #e0e0e0;
+    .button-grid button:hover {
+      background: #ddd;
     }
+
+    table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background-color: #eee; }
+
+    .summe, .aktionen { margin-top: 20px; font-weight: bold; }
+    .aktionen button { margin-right: 10px; }
   </style>
 
+  <!-- PDF Export Bibliotheken -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
   <h1>Inventur – Holzreste</h1>
 
-  <div class="holzarten" id="holzartenContainer">
-    <h3>Holzart wählen:</h3><br>
+  <div class="holzarten">
+    <h3>Holzart wählen:</h3>
+    <div class="button-grid" id="holzartenGrid"></div>
   </div>
 
   <div class="staerken" id="staerkenContainer" style="display:none">
     <h3>Stärke wählen:</h3>
+    <div class="button-grid" id="staerkenGrid"></div>
   </div>
 
   <table id="tabelle">
@@ -104,6 +66,7 @@
         <th>Breite (cm)</th>
         <th>Länge (cm)</th>
         <th>Fläche (m²)</th>
+        <th>Preis</th>
         <th>Aktion</th>
       </tr>
     </thead>
@@ -125,34 +88,37 @@
     let ausgewaehlteHolzart = null;
 
     async function ladePreise() {
-      const res = await fetch('preise.json');
-      daten = await res.json();
-      zeigeHolzarten();
-      fülleTabelle();
+      try {
+        const res = await fetch('preise.json');
+        daten = await res.json();
+        zeigeHolzarten();
+        fülleTabelle();
+      } catch (e) {
+        console.error("Fehler beim Laden von preise.json:", e);
+      }
     }
 
     function zeigeHolzarten() {
-      const container = document.getElementById('holzartenContainer');
+      const grid = document.getElementById('holzartenGrid');
+      grid.innerHTML = '';
       daten.forEach(holz => {
         const btn = document.createElement('button');
         btn.textContent = holz.holzname;
-        btn.className = 'holz-button';
         btn.onclick = () => {
           ausgewaehlteHolzart = holz;
           zeigeStaerken(holz);
         };
-        container.appendChild(btn);
+        grid.appendChild(btn);
       });
     }
 
     function zeigeStaerken(holz) {
-      const container = document.getElementById('staerkenContainer');
-      container.style.display = 'block';
-      container.innerHTML = '<h3>Stärke wählen:</h3>';
+      const grid = document.getElementById('staerkenGrid');
+      grid.innerHTML = '';
+      document.getElementById('staerkenContainer').style.display = 'block';
       holz.stärken.forEach(s => {
         const btn = document.createElement('button');
         btn.textContent = s.mm + ' mm';
-        btn.className = 'holz-button';
         btn.onclick = () => {
           auswahl.push({
             holzname: holz.holzname,
@@ -160,11 +126,13 @@
             artikelnummer: s.ArtNr,
             breite: '',
             laenge: '',
-            m2: 0
+            m2: 0,
+            preisProM2: s.preisProM2 || 0,
+            holz_preis: 0
           });
           speichereUndAktualisiere();
         };
-        container.appendChild(btn);
+        grid.appendChild(btn);
       });
     }
 
@@ -173,6 +141,7 @@
       const b = parseFloat(auswahl[index].breite);
       const l = parseFloat(auswahl[index].laenge);
       auswahl[index].m2 = (b && l) ? (b * l / 10000) : 0;
+      auswahl[index].holz_preis = auswahl[index].m2 * (auswahl[index].preisProM2 || 0);
       speichereUndAktualisiere();
     }
 
@@ -192,9 +161,11 @@
       let gesamt = 0;
 
       auswahl.forEach((e, i) => {
-        const tr = document.createElement('tr');
         const flaeche = e.m2 ? e.m2.toFixed(3) : '';
         gesamt += parseFloat(flaeche) || 0;
+        const preis = e.holz_preis ? e.holz_preis.toFixed(2) + ' €' : '';
+
+        const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${e.artikelnummer}</td>
           <td>${e.holzname}</td>
@@ -202,6 +173,7 @@
           <td><input type="number" min="0" value="${e.breite}" onchange="aktualisiereFeld(${i}, 'breite', this.value)"></td>
           <td><input type="number" min="0" value="${e.laenge}" onchange="aktualisiereFeld(${i}, 'laenge', this.value)"></td>
           <td>${flaeche}</td>
+          <td>${preis}</td>
           <td><button onclick="entferne(${i})">🗑️</button></td>
         `;
         tbody.appendChild(tr);
@@ -221,10 +193,13 @@
             staerke: e.staerke,
             breite: '',
             laenge: '',
-            m2: 0
+            m2: 0,
+            preisProM2: e.preisProM2 || 0,
+            holz_preis: 0
           };
         }
         zusammengefasst[key].m2 += parseFloat(e.m2) || 0;
+        zusammengefasst[key].holz_preis += parseFloat(e.holz_preis) || 0;
       });
       auswahl = Object.values(zusammengefasst);
       speichereUndAktualisiere();
@@ -237,7 +212,7 @@
     function tabelleSpeichern() {
       const dateiName = prompt('Gib den Dateinamen ein, um die Tabelle zu speichern (z. B. "holztabelle.json"):');
       if (dateiName) {
-        const blob = new Blob([JSON.stringify(auswahl)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(auswahl, null, 2)], { type: 'application/json' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = dateiName;
@@ -250,9 +225,9 @@
       const doc = new jsPDF();
       doc.setFontSize(12);
       doc.text('Inventur – Holzreste', 14, 10);
-      doc.autoTable({
-        html: '#tabelle',
-        startY: 20,
+      doc.autoTable({ 
+        html: '#tabelle', 
+        startY: 20, 
         theme: 'grid',
         headStyles: { fillColor: [0, 0, 0] }
       });
