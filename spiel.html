@@ -3,144 +3,135 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dino Runner – Spiel</title>
+<title>Dino Spiel</title>
 <style>
-  body { margin:0; padding:0; overflow:hidden; font-family:sans-serif; background:#f0f0f0; }
-  canvas { display:block; background:#fff; margin:0 auto; }
-  #scoreTable {
-    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-    background: rgba(255,255,255,0.9); padding:10px; border-radius:5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size:14px;
+  body { margin:0; font-family:sans-serif; display:flex; flex-direction:column; align-items:center; background:#f4f4f4; }
+  canvas { background:#fff; display:block; margin-top:20px; }
+  #gameOverOverlay {
+    display:none;
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.7); color:white; text-align:center;
+    padding-top:50px; box-sizing:border-box;
   }
-  #nicknameInput {
-    margin-top:5px; width:100px;
-  }
+  #highscoreTable { margin-top:20px; border-collapse: collapse; width:300px; }
+  #highscoreTable th, #highscoreTable td { border:1px solid #000; padding:5px; text-align:center; }
 </style>
 </head>
 <body>
 
+<h1>Dino Spiel</h1>
 <canvas id="gameCanvas"></canvas>
 
-<div id="scoreTable">
-  <div>Top 5 Highscores:</div>
-  <ol id="highscores"></ol>
-  <input type="text" id="nicknameInput" placeholder="Nickname">
-  <button onclick="saveScore()">Speichern</button>
+<!-- Game Over Overlay -->
+<div id="gameOverOverlay">
+  <h1>Game Over!</h1>
+  <p id="finalScore"></p>
+  <input type="text" id="nicknameGameOver" placeholder="Dein Name">
+  <button onclick="saveScoreGameOver()">Score speichern</button>
 </div>
+
+<h2>Highscores (Top 5)</h2>
+<table id="highscoreTable">
+  <thead><tr><th>Platz</th><th>Name</th><th>Score</th></tr></thead>
+  <tbody id="highscoreBody"></tbody>
+</table>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+let canvasWidth = Math.min(window.innerWidth - 20, 600);
+let canvasHeight = 150;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight * 0.6; // 60% Höhe für Spiel, Rest für Score
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+let dino = { x:50, y:canvasHeight-50, width:40, height:40, yVel:0, gravity:0.6, jumpPower:-12, onGround:true };
+let obstacles = [], spawnTimer=0, score=0, gamePaused=false;
 
-// Dino
-const dino = { x:50, y:0, width:50, height:50, yVel:0, gravity:0.7, jump:15, onGround:false };
+let highScores = JSON.parse(localStorage.getItem('dinoHighscores')) || [];
 
-// Hindernisse
-let obstacles = [];
-let spawnTimer = 0;
+// Anpassung Canvas bei Resize
+window.addEventListener('resize', ()=>{
+  canvasWidth = Math.min(window.innerWidth - 20, 600);
+  canvas.width = canvasWidth;
+});
 
-// Score
-let score = 0;
-let gameSpeed = 5;
+// Steuerung
+window.addEventListener('keydown', (e)=>{ if(e.code==='Space') jump(); });
+window.addEventListener('touchstart', ()=> jump());
 
-// Highscores
-let highScores = JSON.parse(localStorage.getItem('dinoHighscores')||'[]');
-function updateHighscoreList() {
-  const ol = document.getElementById('highscores');
-  ol.innerHTML = '';
-  highScores.slice(0,5).forEach(s => {
-    const li = document.createElement('li');
-    li.textContent = `${s.name}: ${Math.floor(s.score)}`;
-    ol.appendChild(li);
-  });
-}
-updateHighscoreList();
-
-// Input
-document.addEventListener('keydown', e => { if(e.code==='Space') jump(); });
-canvas.addEventListener('touchstart', jump);
-
-function jump() {
-  if(dino.onGround){
-    dino.yVel = -dino.jump;
-    dino.onGround = false;
-  }
-}
-
-function spawnObstacle() {
-  const height = 20 + Math.random()*50;
-  obstacles.push({
-    x: canvas.width,
-    y: canvas.height - height,
-    width: 20 + Math.random()*30,
-    height: height
-  });
-}
-
-function saveScore() {
-  const name = document.getElementById('nicknameInput').value || 'Spieler';
-  highScores.push({name, score});
-  highScores.sort((a,b)=>b.score-a.score);
-  localStorage.setItem('dinoHighscores', JSON.stringify(highScores));
-  updateHighscoreList();
+function jump(){
+  if(dino.onGround && !gamePaused){ dino.yVel = dino.jumpPower; dino.onGround = false; }
 }
 
 // Game Loop
-function update() {
+function update(){
+  if(gamePaused) { requestAnimationFrame(update); return; }
+
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
   // Dino
   dino.y += dino.yVel;
   dino.yVel += dino.gravity;
-  if(dino.y + dino.height > canvas.height){
-    dino.y = canvas.height - dino.height;
-    dino.yVel = 0;
-    dino.onGround = true;
-  }
-  ctx.fillStyle = '#00b';
-  ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+  if(dino.y >= canvas.height - dino.height){ dino.y = canvas.height - dino.height; dino.yVel=0; dino.onGround=true; }
+  ctx.fillStyle='green'; ctx.fillRect(dino.x,dino.y,dino.width,dino.height);
 
   // Obstacles
-  spawnTimer--;
-  if(spawnTimer<=0){
-    spawnObstacle();
-    spawnTimer = 60 + Math.random()*60;
-  }
-
-  obstacles.forEach((ob,i)=>{
-    ob.x -= gameSpeed;
-    ctx.fillStyle = '#b00';
-    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
-
+  spawnTimer++;
+  if(spawnTimer > 90){ spawnTimer=0; obstacles.push({x:canvas.width, y:canvas.height-40, width:20, height:40, speed:6+score/100}); }
+  obstacles.forEach(ob=>{
+    ob.x -= ob.speed;
+    ctx.fillStyle='red'; ctx.fillRect(ob.x,ob.y,ob.width,ob.height);
     // Kollisionsprüfung
     if(dino.x < ob.x+ob.width && dino.x+dino.width > ob.x &&
        dino.y < ob.y+ob.height && dino.y+dino.height > ob.y){
-         alert('Game Over! Score: '+Math.floor(score));
-         score=0; obstacles=[]; spawnTimer=0; dino.y = canvas.height - dino.height; dino.yVel=0; dino.onGround=true;
+         gameOver();
     }
-
-    if(ob.x+ob.width<0) obstacles.splice(i,1);
   });
+  obstacles = obstacles.filter(o=>o.x+o.width>0);
 
   // Score
-  score += 0.1;
-  document.getElementById('nicknameInput').placeholder = 'Score: '+Math.floor(score);
-
-  // Geschwindigkeit erhöhen
-  gameSpeed = 5 + Math.floor(score/10)*0.5;
+  score += 0.01 ;
+  ctx.fillStyle='black';
+  ctx.font='16px sans-serif';
+  ctx.fillText('Score: '+Math.floor(score), 10,20);
 
   requestAnimationFrame(update);
 }
 
+function gameOver(){
+  gamePaused=true;
+  document.getElementById('finalScore').textContent='Score: '+Math.floor(score);
+  document.getElementById('gameOverOverlay').style.display='block';
+}
+
+function saveScoreGameOver(){
+  const name = document.getElementById('nicknameGameOver').value || 'Spieler';
+  highScores.push({name, score: Math.floor(score)});
+  highScores.sort((a,b)=>b.score - a.score);
+  highScores = highScores.slice(0,5); // nur Top 5
+  localStorage.setItem('dinoHighscores', JSON.stringify(highScores));
+  updateHighscoreList();
+
+  // Overlay schließen & Spiel zurücksetzen
+  document.getElementById('gameOverOverlay').style.display='none';
+  score=0; obstacles=[]; spawnTimer=0;
+  dino.y = canvas.height - dino.height; dino.yVel=0; dino.onGround=true;
+  gamePaused=false;
+}
+
+function updateHighscoreList(){
+  const tbody = document.getElementById('highscoreBody');
+  tbody.innerHTML='';
+  highScores.forEach((s,i)=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${i+1}</td><td>${s.name}</td><td>${s.score}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// initial Highscore Liste anzeigen
+updateHighscoreList();
 update();
 </script>
-
 </body>
 </html>
