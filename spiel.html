@@ -1,141 +1,145 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mini-Spiel: Dino Runner 🦖</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { font-family: sans-serif; padding: 30px; background: #f9f9f9; text-align: center; }
-    h1 { font-size: 2em; margin-bottom: 20px; }
-    #dinoCanvas {
-      background-color: #e0e0e0;
-      display: block;
-      margin: 20px auto;
-      border: 2px solid #333;
-      border-radius: 10px;
-    }
-    a.button {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #007acc;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      margin-top: 20px;
-    }
-    a.button:hover { background: #005a99; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Runner – Spiel</title>
+<style>
+  body { margin:0; padding:0; overflow:hidden; font-family:sans-serif; background:#f0f0f0; }
+  canvas { display:block; background:#fff; margin:0 auto; }
+  #scoreTable {
+    position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.9); padding:10px; border-radius:5px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); font-size:14px;
+  }
+  #nicknameInput {
+    margin-top:5px; width:100px;
+  }
+</style>
 </head>
 <body>
 
-<h1>Mini-Spiel: Dino Runner 🦖</h1>
-<p>Springe über die Hindernisse mit Leertaste.</p>
-<canvas id="dinoCanvas" width="600" height="150"></canvas>
-<p><small>Drücke Leertaste zum Springen!</small></p>
-<a href="index.html" class="button">Zurück zur Startseite</a>
+<canvas id="gameCanvas"></canvas>
 
-<!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<div id="scoreTable">
+  <div>Top 5 Highscores:</div>
+  <ol id="highscores"></ol>
+  <input type="text" id="nicknameInput" placeholder="Nickname">
+  <button onclick="saveScore()">Speichern</button>
+</div>
 
 <script>
-  const canvas = document.getElementById("dinoCanvas");
-  const ctx = canvas.getContext("2d");
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
 
-  let dino = { x: 50, y: 120, width: 20, height: 20, vy: 0, jumping: false };
-  let gravity = 0.7;
-  let obstacles = [];
-  let gameOver = false;
-  let score = 0;
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight * 0.6; // 60% Höhe für Spiel, Rest für Score
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 
-  function spawnObstacle() {
-    const size = 20;
-    obstacles.push({ x: canvas.width, y: 130, width: size, height: size });
+// Dino
+const dino = { x:50, y:0, width:50, height:50, yVel:0, gravity:0.7, jump:15, onGround:false };
+
+// Hindernisse
+let obstacles = [];
+let spawnTimer = 0;
+
+// Score
+let score = 0;
+let gameSpeed = 5;
+
+// Highscores
+let highScores = JSON.parse(localStorage.getItem('dinoHighscores')||'[]');
+function updateHighscoreList() {
+  const ol = document.getElementById('highscores');
+  ol.innerHTML = '';
+  highScores.slice(0,5).forEach(s => {
+    const li = document.createElement('li');
+    li.textContent = `${s.name}: ${Math.floor(s.score)}`;
+    ol.appendChild(li);
+  });
+}
+updateHighscoreList();
+
+// Input
+document.addEventListener('keydown', e => { if(e.code==='Space') jump(); });
+canvas.addEventListener('touchstart', jump);
+
+function jump() {
+  if(dino.onGround){
+    dino.yVel = -dino.jump;
+    dino.onGround = false;
+  }
+}
+
+function spawnObstacle() {
+  const height = 20 + Math.random()*50;
+  obstacles.push({
+    x: canvas.width,
+    y: canvas.height - height,
+    width: 20 + Math.random()*30,
+    height: height
+  });
+}
+
+function saveScore() {
+  const name = document.getElementById('nicknameInput').value || 'Spieler';
+  highScores.push({name, score});
+  highScores.sort((a,b)=>b.score-a.score);
+  localStorage.setItem('dinoHighscores', JSON.stringify(highScores));
+  updateHighscoreList();
+}
+
+// Game Loop
+function update() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // Dino
+  dino.y += dino.yVel;
+  dino.yVel += dino.gravity;
+  if(dino.y + dino.height > canvas.height){
+    dino.y = canvas.height - dino.height;
+    dino.yVel = 0;
+    dino.onGround = true;
+  }
+  ctx.fillStyle = '#00b';
+  ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
+
+  // Obstacles
+  spawnTimer--;
+  if(spawnTimer<=0){
+    spawnObstacle();
+    spawnTimer = 60 + Math.random()*60;
   }
 
-  function resetGame() {
-    obstacles = [];
-    dino.y = 120;
-    dino.vy = 0;
-    dino.jumping = false;
-    score = 0;
-    gameOver = false;
-  }
+  obstacles.forEach((ob,i)=>{
+    ob.x -= gameSpeed;
+    ctx.fillStyle = '#b00';
+    ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
 
-  function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Dino
-    ctx.fillStyle = "#333";
-    ctx.fillRect(dino.x, dino.y, dino.width, dino.height);
-
-    // Hindernisse
-    ctx.fillStyle = "red";
-    obstacles.forEach(obs => ctx.fillRect(obs.x, obs.y, obs.width, obs.height));
-
-    // Bodenlinie
-    ctx.strokeStyle = "#555";
-    ctx.beginPath();
-    ctx.moveTo(0, 150);
-    ctx.lineTo(canvas.width, 150);
-    ctx.stroke();
-
-    // Punktestand
-    ctx.fillStyle = "black";
-    ctx.font = "16px sans-serif";
-    ctx.fillText(`Score: ${score}`, 500, 20);
-  }
-
-  function update() {
-    if (gameOver) return;
-
-    dino.vy += gravity;
-    dino.y += dino.vy;
-
-    if (dino.y > 120) {
-      dino.y = 120;
-      dino.vy = 0;
-      dino.jumping = false;
+    // Kollisionsprüfung
+    if(dino.x < ob.x+ob.width && dino.x+dino.width > ob.x &&
+       dino.y < ob.y+ob.height && dino.y+dino.height > ob.y){
+         alert('Game Over! Score: '+Math.floor(score));
+         score=0; obstacles=[]; spawnTimer=0; dino.y = canvas.height - dino.height; dino.yVel=0; dino.onGround=true;
     }
 
-    obstacles.forEach(obs => obs.x -= 5);
-
-    // Hindernisse entfernen
-    obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
-
-    // Kollision prüfen
-    obstacles.forEach(obs => {
-      if (dino.x < obs.x + obs.width &&
-          dino.x + dino.width > obs.x &&
-          dino.y < obs.y + obs.height &&
-          dino.y + dino.height > obs.y) {
-        gameOver = true;
-        alert("Game Over! Score: " + score);
-        resetGame();
-      }
-    });
-
-    // Punkte erhöhen
-    score++;
-
-    draw();
-    requestAnimationFrame(update);
-  }
-
-  document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" && !dino.jumping) {
-      dino.vy = -12;
-      dino.jumping = true;
-    }
+    if(ob.x+ob.width<0) obstacles.splice(i,1);
   });
 
-  // Hindernisse alle 2 Sekunden spawnen
-  setInterval(() => {
-    if (!gameOver) spawnObstacle();
-  }, 2000);
+  // Score
+  score += 0.1;
+  document.getElementById('nicknameInput').placeholder = 'Score: '+Math.floor(score);
 
-  update();
+  // Geschwindigkeit erhöhen
+  gameSpeed = 5 + Math.floor(score/10)*0.5;
+
+  requestAnimationFrame(update);
+}
+
+update();
 </script>
 
 </body>
