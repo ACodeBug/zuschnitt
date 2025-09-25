@@ -11,14 +11,31 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
 <style>
-  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-inner-spin-button,
   input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
+
+  .table select,
+  .table input {
+    min-width: 120px;
+    /* breiter machen */
+  }
+
+  .table td:nth-child(5) input,
+  /* Länge */
+  .table td:nth-child(6) input {
+    /* Breite */
+    width: 100px;
+    /* fix breite für 3-stellige Eingabe */
+    text-align: right;
+    /* Zahlen schön rechtsbündig */
+  }
 </style>
 
 </style>
+
 <body class="p-4 bg-light">
   <div class="container">
     <h1 class="mb-4 text-primary">Preisberechnung – Holzarten</h1>
@@ -61,7 +78,7 @@
           <th>Nr.</th>
           <th>Holzart</th>
           <th>Stärke (mm)</th>
-          <!--<th>Art.-Nr.</th>-->
+          <th>Art.-Nr.</th>
           <th>Preis/m²</th>
           <th>Länge (cm)</th>
           <th>Breite (cm)</th>
@@ -206,15 +223,15 @@
       // Event: Wenn Stärke geändert wird
       staerkeSelectRow.addEventListener('change', function () {
         const selectedOption = this.selectedOptions[0];
-        //zeile.cells[3].textContent = selectedOption.dataset.artnr;
-        zeile.cells[3].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
+        zeile.cells[3].textContent = selectedOption.dataset.artnr;
+        zeile.cells[4].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
       });
       // <td>${artnr}</td>
       zeile.innerHTML = `
         <td class="zeilenNummer"></td>
         <td></td>
         <td></td>
-        
+        <td>${artnr}</td>
         <td>${preis.toFixed(2)}</td>
         <td><input type="number" class="form-control w-100" min="0" onchange="updateM2(this)"></td>
         <td><input type="number" class="form-control w-100" min="0" onchange="updateM2(this)"></td>
