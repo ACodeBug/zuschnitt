@@ -10,7 +10,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 </head>
+<style>
+  input[type=number]::-webkit-inner-spin-button, 
+  input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+</style>
 
+</style>
 <body class="p-4 bg-light">
   <div class="container">
     <h1 class="mb-4 text-primary">Preisberechnung – Holzarten</h1>
@@ -53,7 +61,7 @@
           <th>Nr.</th>
           <th>Holzart</th>
           <th>Stärke (mm)</th>
-          <th>Art.-Nr.</th>
+          <!--<th>Art.-Nr.</th>-->
           <th>Preis/m²</th>
           <th>Länge (cm)</th>
           <th>Breite (cm)</th>
@@ -191,26 +199,26 @@
         updateStaerkeOptions(this.value);
         staerkeSelectRow.selectedIndex = 0;
         const selectedOption = staerkeSelectRow.selectedOptions[0];
-        zeile.cells[3].textContent = selectedOption.dataset.artnr;
-        zeile.cells[4].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
+        // zeile.cells[3].textContent = selectedOption.dataset.artnr;
+        zeile.cells[3].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
       });
 
       // Event: Wenn Stärke geändert wird
       staerkeSelectRow.addEventListener('change', function () {
         const selectedOption = this.selectedOptions[0];
-        zeile.cells[3].textContent = selectedOption.dataset.artnr;
-        zeile.cells[4].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
+        //zeile.cells[3].textContent = selectedOption.dataset.artnr;
+        zeile.cells[3].textContent = parseFloat(selectedOption.dataset.preis).toFixed(2);
       });
-
+      // <td>${artnr}</td>
       zeile.innerHTML = `
         <td class="zeilenNummer"></td>
         <td></td>
         <td></td>
-        <td>${artnr}</td>
+        
         <td>${preis.toFixed(2)}</td>
-        <td><input type="number" class="form-control" min="0" onchange="updateM2(this)"></td>
-        <td><input type="number" class="form-control" min="0" onchange="updateM2(this)"></td>
-        <td><input type="number" class="form-control" min="1" value="1" onchange="updateM2(this)"></td>
+        <td><input type="number" class="form-control w-100" min="0" onchange="updateM2(this)"></td>
+        <td><input type="number" class="form-control w-100" min="0" onchange="updateM2(this)"></td>
+        <td><input type="number" class="form-control w-100" min="1" value="1" onchange="updateM2(this)"></td>
         <td class="m2-zelle">0.00</td>
         <td><button class="btn btn-sm btn-danger" onclick="zeileLoeschen(this)">🗑️</button></td>
       `;

@@ -44,6 +44,13 @@ let canvasHeight = 150;
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
+// Bilder laden
+const dinoImg = new Image();
+dinoImg.src = "dino.png";
+
+const cactusImg = new Image();
+cactusImg.src = "saw.png";
+
 let dino = { x:50, y:canvasHeight-50, width:40, height:40, yVel:0, gravity:0.6, jumpPower:-12, onGround:true };
 let obstacles = [], spawnTimer=0, score=0, gamePaused=false;
 
@@ -73,14 +80,18 @@ function update(){
   dino.y += dino.yVel;
   dino.yVel += dino.gravity;
   if(dino.y >= canvas.height - dino.height){ dino.y = canvas.height - dino.height; dino.yVel=0; dino.onGround=true; }
-  ctx.fillStyle='green'; ctx.fillRect(dino.x,dino.y,dino.width,dino.height);
+  ctx.drawImage(dinoImg, dino.x, dino.y, dino.width, dino.height);
 
   // Obstacles
   spawnTimer++;
-  if(spawnTimer > 90){ spawnTimer=0; obstacles.push({x:canvas.width, y:canvas.height-40, width:20, height:40, speed:6+score/100}); }
+  if(spawnTimer > 90){ 
+    spawnTimer=0; 
+    obstacles.push({x:canvas.width, y:canvas.height-40, width:40, height:40, speed:6+score/100}); 
+  }
   obstacles.forEach(ob=>{
     ob.x -= ob.speed;
-    ctx.fillStyle='red'; ctx.fillRect(ob.x,ob.y,ob.width,ob.height);
+    ctx.drawImage(cactusImg, ob.x, ob.y, ob.width, ob.height);
+
     // Kollisionsprüfung
     if(dino.x < ob.x+ob.width && dino.x+dino.width > ob.x &&
        dino.y < ob.y+ob.height && dino.y+dino.height > ob.y){

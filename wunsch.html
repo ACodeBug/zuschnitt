@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wünsch / Nachricht an uns</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body { background:#f8f9fa; }
+  .card { max-width:920px; margin:30px auto; }
+  textarea { min-height:160px; resize:vertical; }
+  pre { white-space: pre-wrap; word-wrap: break-word; background:#f1f1f1; padding:12px; border-radius:6px; }
+  .small-note { font-size:0.9rem; color:#666; }
+</style>
+</head>
+<body>
+<div class="card shadow-sm">
+  <div class="card-body">
+    <h3 class="card-title mb-3">Wunsch / Nachricht an uns</h3>
+    <p class="small-note">Beschreibe hier, was du möchtest (Maße, Materialwünsche, Lieferdaten, besondere Hinweise...). Nach Klick auf <strong>E-Mail vorbereiten</strong> öffnet sich dein E-Mail-Programm mit vorgefertigtem Text.</p>
+
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Kunde (Name)</label>
+        <input id="kundeName" class="form-control" placeholder="Max Mustermann">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Telefon</label>
+        <input id="kundeTelefon" class="form-control" placeholder="+49 170 1234567">
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label">Betreff (kurz, optional)</label>
+      <input id="customSubject" class="form-control" placeholder="z. B. Küchenarbeitsplatte – Zuschnitt">
+      <div class="form-text">Wenn leer bleibt, wird automatisch ein Betreff mit Kunde-ID und "Auftrag" erstellt.</div>
+    </div>
+
+    <div class="mt-3">
+      <label class="form-label">Deine Nachricht</label>
+      <textarea id="message" class="form-control" placeholder="Beschreibe hier deine Wünsche, Maße, Menge, ..."></textarea>
+    </div>
+
+    <div class="mt-3 d-flex gap-2">
+      <button class="btn btn-primary" onclick="prepareEmail()">✉️ E-Mail vorbereiten</button>
+      <button class="btn btn-outline-secondary" onclick="updatePreview()">🔎 Vorschau aktualisieren</button>
+      <button class="btn btn-outline-success" onclick="downloadText()">⬇️ Als .txt herunterladen</button>
+      <button class="btn btn-outline-info" onclick="copyToClipboard()">📋 Kopieren</button>
+    </div>
+
+    <div class="mt-4">
+      <h6>Vorschau (wird in die E-Mail eingefügt)</h6>
+      <pre id="preview">Noch keine Vorschau. Klicke auf "Vorschau aktualisieren" oder "E-Mail vorbereiten".</pre>
+    </div>
+
+    <div class="mt-3 text-muted small">
+      Hinweis: Das Öffnen der E-Mail erfolgt per <code>mailto:</code>. Dein E-Mail-Programm/Browser erstellt die Nachricht und hängt sie an das neue Fenster an. Bei sehr langen Texten kann es zu Einschränkungen kommen (abhängig vom Mail-Client).
+    </div>
+  </div>
+  <div class="card-footer text-muted">
+    <small>Die erzeugte Kunde-ID wird automatisch erstellt und im Betreff angezeigt.</small>
+  </div>
+</div>
+
+<script>
+  // Generiert eine zufällige Kunden-/Auftrags-ID (z. B. ID-482913)
+  function generateId() {
+    const n = Math.floor(Math.random() * 900000) + 100000; // 6-stellige Zahl
+    return 'ID-' + n;
+  }
+
+  // Erstellt den E-Mail-Betreff
+  function buildSubject(id) {
+    const custom = document.getElementById('customSubject').value.trim();
+    if (custom) return `${id} - ${custom}`;
+    return `${id} - Auftrag`;
+  }
+
+  // Erstellt den E-Mail-Text (Body)
+  function buildBody(id) {
+    const name = (document.getElementById('kundeName').value || '-').trim();
+    const phone = (document.getElementById('kundeTelefon').value || '-').trim();
+    const msg = (document.getElementById('message').value || '').trim();
+
+    const now = new Date();
+    const ts = now.toLocaleString();
+
+    return [
+      `Bestellungs-ID: ${id}`,
+      `Datum: ${ts}`,
+      ``,
+      `Kunde: ${name}`,
+      `Telefon: ${phone}`,
+      ``,
+      `--- Nachricht vom Kunden ---`,
+      msg || '(keine Nachricht eingegeben)',
+      ``,
+      `--- Ende Nachricht ---`,
+      ``,
+      `Hinweis: Bitte diese Anfrage prüfen und bestätigen.`
+    ].join('\n');
+  }
+
+  // Aktualisiert die Vorschau
+  function updatePreview(id) {
+    const theId = id || currentGeneratedId || '(wird bei Vorbereitung erzeugt)';
+    const subj = buildSubject(theId);
+    const body = buildBody(theId);
+    document.getElementById('preview').textContent = `Betreff: ${subj}\n\n${body}`;
+  }
+
+  // Kopie & Download Funktionen
+  function copyToClipboard() {
+    updatePreview(); // sicherstellen dass Vorschau aktuell ist
+    const text = document.getElementById('preview').textContent;
+    navigator.clipboard?.writeText(text).then(() => {
+      alert('Vorschau in die Zwischenablage kopiert.');
+    }, () => {
+      alert('Kopieren fehlgeschlagen — bitte manuell markieren und kopieren.');
+    });
+  }
+
+  function downloadText() {
+    const id = currentGeneratedId || generateId();
+    updatePreview(id);
+    const text = document.getElementById('preview').textContent;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Auftrag_${id}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
+
+  // Mailto vorbereiten und öffnen
+  let currentGeneratedId = null;
+  function prepareEmail() {
+    // Erzeuge neue ID einmal pro Vorbereitung
+    currentGeneratedId = generateId();
+
+    const subject = buildSubject(currentGeneratedId);
+    const body = buildBody(currentGeneratedId);
+
+    updatePreview(currentGeneratedId);
+
+    // Empfänger eintragen: du kannst hier eine feste e-mail-Adresse setzen
+    const recipient = ''; // z.B. "bestellung@deinedomain.de"
+    // Wenn recipient leer, öffnet es einfach neuen Mail-Entwurf ohne Empfänger.
+
+    const mailto = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Öffne Mail-Client — Kunde kann noch bearbeiten und senden
+    window.location.href = mailto;
+  }
+
+  // Init: bei Laden schon ein Beispiel in Vorschau anzeigen
+  updatePreview();
+
+  // Fallback: wenn navigator.clipboard nicht verfügbar, deaktivieren Button nicht nötig — handled in Promise
+</script>
+</body>
+</html>
