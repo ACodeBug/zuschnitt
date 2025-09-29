@@ -150,15 +150,15 @@
     },{
       "holzname": "Multiplex",
       "stärken": [
-        { "mm": 4, "ArtNr" : 293125 ,"preisProM2": 35.99 },
-        { "mm": 6.5, "ArtNr" : 293126 ,"preisProM2": 41.99 },
-        { "mm": 9, "ArtNr" : 293127 ,"preisProM2": 45.99 },
-        { "mm": 12, "ArtNr" : 293128 ,"preisProM2": 51.99 },
-        { "mm": 15, "ArtNr" : 293129 ,"preisProM2": 61.99 },
-        { "mm": 18, "ArtNr" : 293130 ,"preisProM2": 71.99 },
-        { "mm": 21, "ArtNr" : 293131 ,"preisProM2": 85.99 },
-        { "mm": 24, "ArtNr" : 293132 ,"preisProM2": 114.99 },
-        { "mm": 27, "ArtNr" : 788537 ,"preisProM2": 99.99 },
+        { "mm": 4, "ArtNr" : 293125 ,"preisProM2": 37.99 },
+        { "mm": 6.5, "ArtNr" : 293126 ,"preisProM2": 42.99 },
+        { "mm": 9, "ArtNr" : 293127 ,"preisProM2": 47.99 },
+        { "mm": 12, "ArtNr" : 293128 ,"preisProM2": 52.99 },
+        { "mm": 15, "ArtNr" : 293129 ,"preisProM2": 62.99 },
+        { "mm": 18, "ArtNr" : 293130 ,"preisProM2": 73.99 },
+        { "mm": 21, "ArtNr" : 293131 ,"preisProM2": 89.99 },
+        { "mm": 24, "ArtNr" : 293132 ,"preisProM2": 122.99 },
+        { "mm": 27, "ArtNr" : 788537 ,"preisProM2": 107.99 },
         { "mm": 30, "ArtNr" : 788472 ,"preisProM2": 104.99 },
         { "mm": 40, "ArtNr" : 788597 ,"preisProM2": 107.99 }
       ]
@@ -166,37 +166,37 @@
     {
       "holzname": "Dämmplatte",
       "stärken": [
-        { "mm": 12, "ArtNr" : 548525 ,"preisProM2": 8.99 }
+        { "mm": 12, "ArtNr" : 548525 ,"preisProM2": 9.49 }
       ]
     },
     {
       "holzname": "Bauplatte alu",
       "stärken": [
-        { "mm": 3, "ArtNr" : 236898 ,"preisProM2": 79.99 }
+        { "mm": 3, "ArtNr" : 236898 ,"preisProM2": 82.99 }
       ]
     },
     {
       "holzname": "Bauplatte weiß",
       "stärken": [
-        { "mm": 6, "ArtNr" : 278317 ,"preisProM2": 68.99 }
+        { "mm": 6, "ArtNr" : 278317 ,"preisProM2": 65.99 }
       ]
     },
     {
       "holzname": "Bauplatte braun",
       "stärken": [
-        { "mm": 6, "ArtNr" : 278319 ,"preisProM2": 68.99 }
+        { "mm": 6, "ArtNr" : 278319 ,"preisProM2": 71.99 }
       ]
     },
     {
       "holzname": "Bauplatte anthr.",
       "stärken": [
-        { "mm": 6, "ArtNr" : 278318 ,"preisProM2": 68.99 }
+        { "mm": 6, "ArtNr" : 278318 ,"preisProM2": 71.99 }
       ]
     },
     {
       "holzname": "Bauplatte lichtgr.",
       "stärken": [
-        { "mm": 6, "ArtNr" : 278320 ,"preisProM2": 68.99 }
+        { "mm": 6, "ArtNr" : 278320 ,"preisProM2": 71.99 }
       ]
     },
     {
@@ -218,7 +218,7 @@
       "stärken": [
         { "mm": 18, "ArtNr" : 548536 ,"preisProM2": 99.99 },
         { "mm": 27, "ArtNr" : 788677 ,"preisProM2": 119.99 },
-        { "mm": 40, "ArtNr" : 788678 ,"preisProM2": 94.99 }
+        { "mm": 40, "ArtNr" : 788678 ,"preisProM2": 104.99 }
       ]
     },
     {
@@ -243,4 +243,5 @@
     }
   ]
   
+
 
