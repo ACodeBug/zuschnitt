@@ -1,12 +1,12 @@
 // kontakt.js
 const kontaktInfo = {
     oeffnungszeiten: [
-        "Mo: 08:00–16:30",
-        "Di: 08:00–16:30",
-        "Mi: 08:00–16:30",
-        "Do: 11:30–18:00",
-        "Fr: 11:30–18:00",
-        "Sa: 11:30–18:00",
+        "Mo: –",
+        "Di: –",
+        "Mi: 11:30–19:00",
+        "Do: –",
+        "Fr: 16:30–20:00",
+        "Sa: 11:30–19:00",
         "So: geschlossen"
     ],
     telefon: "+49 8171 219174",
@@ -37,3 +37,4 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
