@@ -28,7 +28,7 @@ function erstelleKontaktKarte(containerId) {
 
     karte.innerHTML = `
         <h2>Kontakt & Öffnungszeiten</h2>
-        <p><strong>Zuschnitt Öffnungszeiten für 22.09 - 27.09 :</strong></p>
+        <p><strong>Zuschnitt Öffnungszeiten für 06.10 - 12.10 :</strong></p>
         <ul>${oeffnungszeitenHtml}</ul>
         <p><strong>Telefon:</strong> <a href="tel:${kontaktInfo.telefon.replace(/\s+/g,'')}">${kontaktInfo.telefon}</a></p>
         <p><strong>E-Mail:</strong> <a href="mailto:${kontaktInfo.email}">${kontaktInfo.email}</a></p>
@@ -37,4 +37,5 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
