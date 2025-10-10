@@ -5,12 +5,12 @@ const kontaktInfo = {
         "Di: –",
         "Mi: 11:30 – 19:00",
         "Do: 08:00 - 16:00",
-        "Fr: 08:00 – 16:00",
+        "Fr: 11:30 – 19:00",
         "Sa: 11:30 – 19:00",
         "So: geschlossen"
     ],
     telefon: "+49 8171 219174",
-    email: "info@holz-zuschnitt.de",
+    email: "",
     web: "www.baywa-baumarkt.de"
 };
 
@@ -37,6 +37,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
