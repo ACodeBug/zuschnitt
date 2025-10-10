@@ -10,7 +10,7 @@ const kontaktInfo = {
         "So: geschlossen"
     ],
     telefon: "+49 8171 219174",
-    email: "",
+    email: "albert.inform.me@gmail.com",
     web: "www.baywa-baumarkt.de"
 };
 
@@ -37,6 +37,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
