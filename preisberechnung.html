@@ -89,7 +89,7 @@
       </thead>
       <tbody id="tabelle-body"></tbody>
     </table>
-
+    <button class="btn btn-success me-2" onclick="holzHinzufuegen()">➕ Hinzufügen</button>
     <!-- Zusammenfassung -->
     <h2 class="text-secondary">Zwischensummen pro Holzart/Stärke</h2>
     <table id="zusammenfassung-tabelle" class="table table-bordered align-middle">
@@ -397,7 +397,7 @@
 
       emailText += `\nHinweis: Alle Angaben müssen noch durch Mitarbeiter geprüft werden.\n`;
 
-      const mailtoLink = `mailto:?subject=Holzzuschnitt Bestellung ${bestellId}&body=${encodeURIComponent(emailText)}`;
+      const mailtoLink = `mailto:albert.inform.me@gmail.com?subject=Holzzuschnitt Bestellung ${bestellId}&body=${encodeURIComponent(emailText)}`;
       window.location.href = mailtoLink;
     }
 
@@ -405,5 +405,6 @@
     ladeHolzarten();
   </script>
 </body>
+
 
 </html>
