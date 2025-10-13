@@ -28,7 +28,13 @@ function erstelleKontaktKarte(containerId) {
 
     karte.innerHTML = `
         <h2>Kontakt & Öffnungszeiten</h2>
-        <p><strong>Zuschnitt Öffnungszeiten für 06.10 - 12.10 :</strong></p>
+        <p><strong>Zuschnitt Öffnungszeiten für 13.10 - 02.11 :</strong></p>
+        <p><strong>A. Didkovskyi – Urlaub</strong></p>
+        <p class="text-muted" style="font-size: 0.95em;">
+        Ich bin derzeit im Urlaub 🌴.<br>
+        Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
+        oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
+        </p>
         <ul>${oeffnungszeitenHtml}</ul>
         <p><strong>Telefon:</strong> <a href="tel:${kontaktInfo.telefon.replace(/\s+/g,'')}">${kontaktInfo.telefon}</a></p>
         <p><strong>E-Mail:</strong> <a href="mailto:${kontaktInfo.email}">${kontaktInfo.email}</a></p>
@@ -37,6 +43,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
