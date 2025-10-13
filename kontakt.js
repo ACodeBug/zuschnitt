@@ -3,11 +3,11 @@ const kontaktInfo = {
     oeffnungszeiten: [
         "Mo: –",
         "Di: –",
-        "Mi: 11:30 – 19:00",
-        "Do: 08:00 - 16:00",
-        "Fr: 11:30 – 19:00",
-        "Sa: 11:30 – 19:00",
-        "So: geschlossen"
+        "Mi: –",
+        "Do: –",
+        "Fr: –",
+        "Sa: –",
+        "So: –"
     ],
     telefon: "+49 8171 219174",
     email: "albert.inform.me@gmail.com",
@@ -37,6 +37,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
