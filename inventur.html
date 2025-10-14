@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventur</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.5.0/docx.min.js"></script>
+<style>
+  body { font-family:sans-serif; background:#f8f9fa; padding:20px; }
+  .block { border:1px solid #ccc; padding:15px; margin-bottom:15px; border-radius:8px; background:white; position:relative; }
+  .deleteBlock { position:absolute; top:5px; right:5px; cursor:pointer; color:red; font-weight:bold; }
+  label { font-weight:bold; }
+  input { margin-bottom:5px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Inventur – Eingabe</h2>
+  
+  <div id="blocksContainer"></div>
+
+  <button class="btn btn-primary mb-2" onclick="addBlock()">➕ Block hinzufügen</button>
+  <button class="btn btn-success mb-2" onclick="generateWord()">💾 Word exportieren</button>
+  <button class="btn btn-secondary mb-2" onclick="goHome()">🏠 Heim</button>
+</div>
+
+<script>
+let blockCount = 0;
+
+// Standardwerte: Regal von 1 bis 15, Jahr aktuelles Jahr
+function addBlock(){
+  blockCount++;
+  const container = document.getElementById('blocksContainer');
+  const block = document.createElement('div');
+  block.className = 'block';
+  block.id = 'block-'+blockCount;
+  block.innerHTML = `
+    <span class="deleteBlock" onclick="deleteBlock(${blockCount})">✖</span>
+    <div class="mb-2"><label>Feld-Nr:</label> <input type="number" class="feldNummer form-control" placeholder="z.B. 12"></div>
+    <div class="mb-2"><label>Regal von:</label> <input type="number" class="regalVon form-control" placeholder="1"></div>
+    <div class="mb-2"><label>Regal bis:</label> <input type="number" class="regalBis form-control" placeholder="15"></div>
+    <div class="mb-2"><label>Jahr:</label> <input type="number" class="jahr form-control" placeholder="${new Date().getFullYear()}"></div>
+  `;
+  container.appendChild(block);
+}
+
+// Löschen
+function deleteBlock(id){
+  const block = document.getElementById('block-'+id);
+  if(block) block.remove();
+}
+
+// Heim
+function goHome(){
+  window.location.href='index.html';
+}
+
+// Word-Export
+async function generateWord(){
+  const { Document, Packer, Paragraph, TextRun } = docx;
+
+  const doc = new Document({
+    sections: [{
+      properties: {},
+      children: []
+    }]
+  });
+
+  const blocks = document.querySelectorAll('.block');
+  blocks.forEach(b=>{
+    const feld = b.querySelector('.feldNummer').value || '-';
+    const von = parseInt(b.querySelector('.regalVon').value) || 1;
+    const bis = parseInt(b.querySelector('.regalBis').value) || 15;
+    const jahr = b.querySelector('.jahr').value || new Date().getFullYear();
+
+    for(let r=von; r<=bis; r++){
+      doc.sections[0].children.push(new Paragraph({
+        children: [
+          new TextRun({ text:`${feld}/${r}`, font:"Calibri", size:130 }),
+          new TextRun({ text:`\n${jahr}`, font:"Calibri", size:130 })
+        ]
+      }));
+    }
+  });
+
+  const blob = await Packer.toBlob(doc);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'Inventur.docx';
+  link.click();
+}
+</script>
+
+</body>
+</html>
