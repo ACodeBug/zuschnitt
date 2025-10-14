@@ -5,142 +5,106 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inventur Druck</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.3.1/docx.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-body { font-family: sans-serif; padding:20px; background:#f8f9fa; }
-.card { max-width:900px; margin:auto; padding:20px; }
-.block { border:1px solid #ccc; padding:15px; margin-bottom:15px; border-radius:6px; position:relative; background:#fff; }
-.block .deleteBtn { position:absolute; top:10px; right:10px; }
-input { width:100%; }
-</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.3.1/docx.min.js"></script>
 </head>
-<body>
-<div class="card">
-<h2>Inventur vorbereiten</h2>
+<body class="p-4 bg-light">
 
-<div id="passwordSection">
-  <label>Kennwort:</label>
-  <input type="password" id="pwInput" placeholder="Passwort eingeben">
-  <button class="btn btn-primary mt-2" onclick="checkPassword()">Zugang</button>
-</div>
+<div class="container">
+  <h2 class="mb-3">Inventur Druck Generator</h2>
+  
+  <div class="mb-3">
+    <label>Feld-Nr:</label>
+    <input type="number" id="feld" class="form-control" value="4009">
+  </div>
+  <div class="mb-3">
+    <label>Regal von:</label>
+    <input type="number" id="von" class="form-control" value="1">
+  </div>
+  <div class="mb-3">
+    <label>Regal bis:</label>
+    <input type="number" id="bis" class="form-control" value="5">
+  </div>
+  <div class="mb-3">
+    <label>Jahr:</label>
+    <input type="number" id="jahr" class="form-control" value="2025">
+  </div>
 
-<div id="mainSection" style="display:none;">
-  <div id="blocksContainer"></div>
-  <button class="btn btn-success mt-2" onclick="addBlock()">➕ Block hinzufügen</button>
-  <button class="btn btn-primary mt-2" onclick="exportWord()">💾 Word speichern</button>
-  <button class="btn btn-danger mt-2" onclick="exportPDF()">🖨️ PDF drucken</button>
-  <button class="btn btn-secondary mt-2" onclick="goHome()">🏠 Heim</button>
-</div>
+  <button class="btn btn-primary me-2" onclick="generatePDF()">📄 PDF erzeugen</button>
+  <button class="btn btn-success" onclick="generateWord()">📝 Word erzeugen</button>
 </div>
 
 <script>
-const { Document, Packer, Paragraph, TextRun } = docx;
-const { jsPDF } = window.jspdf;
+// 🟦 PDF Generator – platziert Text genau auf der Seite
+function generatePDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
 
-function checkPassword() {
-    const pw = document.getElementById('pwInput').value;
-    if(pw==='heiko'){ // Beispielpasswort
-        document.getElementById('passwordSection').style.display='none';
-        document.getElementById('mainSection').style.display='block';
-        addBlock(); // initial ein Block
-    } else { alert('Falsches Kennwort!'); }
+  const feld = document.getElementById('feld').value || '-';
+  const von = parseInt(document.getElementById('von').value) || 1;
+  const bis = parseInt(document.getElementById('bis').value) || 15;
+  const jahr = document.getElementById('jahr').value || new Date().getFullYear();
+
+  doc.setFont("Helvetica", "normal");
+  doc.setFontSize(130);
+
+  for(let r=von; r<=bis; r++){
+    const oben = `${feld}/${r}`;
+    const mitte = `${jahr}`;
+
+    // Zentrierung
+    const obenBreite = doc.getTextWidth(oben);
+    const mitteBreite = doc.getTextWidth(mitte);
+    doc.text(oben, (pageWidth-obenBreite)/2, pageHeight/2 - 100);
+    doc.text(mitte, (pageWidth-mitteBreite)/2, pageHeight/2 + 50);
+
+    if(r < bis) doc.addPage(); // neue Seite
+  }
+
+  doc.save('Inventur.pdf');
 }
 
-function addBlock() {
-    const container = document.getElementById('blocksContainer');
-    const block = document.createElement('div');
-    block.className = 'block';
+// 🟩 Word Generator – neue Seite pro Druck, Text zentriert
+async function generateWord(){
+  const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
 
-    block.innerHTML = `
-        <button class="btn btn-sm btn-danger deleteBtn" onclick="deleteBlock(this)">❌</button>
-        <div class="row g-2">
-          <div class="col-md-4">
-            <label>Feld-Nr:</label>
-            <input type="number" class="feldNr" min="1" value="1">
-          </div>
-          <div class="col-md-4">
-            <label>Regal von:</label>
-            <input type="number" class="regalVon" min="1" value="1">
-          </div>
-          <div class="col-md-4">
-            <label>Regal bis:</label>
-            <input type="number" class="regalBis" min="1" value="15">
-          </div>
-        </div>
-        <div class="mt-2">
-          <label>Jahr:</label>
-          <input type="number" class="jahr" min="2000" value="${new Date().getFullYear()}">
-        </div>
-    `;
-    container.appendChild(block);
-}
+  const feld = document.getElementById('feld').value || '-';
+  const von = parseInt(document.getElementById('von').value) || 1;
+  const bis = parseInt(document.getElementById('bis').value) || 15;
+  const jahr = document.getElementById('jahr').value || new Date().getFullYear();
 
-function deleteBlock(btn) {
-    btn.closest('.block').remove();
-}
+  const sections = [];
 
-function goHome() {
-    window.location.href='index.html';
-}
-
-// Word export
-function exportWord() {
-    const doc = new Document();
-    const blocks = document.querySelectorAll('.block');
-    blocks.forEach(b=>{
-        const feld = b.querySelector('.feldNr').value;
-        const von = b.querySelector('.regalVon').value || 1;
-        const bis = b.querySelector('.regalBis').value || 15;
-        const jahr = b.querySelector('.jahr').value || new Date().getFullYear();
-
-        for(let r=Number(von); r<=Number(bis); r++){
-            doc.addSection({
-                children:[
-                    new Paragraph({
-                        children:[new TextRun({ text: `${feld}/${r}`, size:130*2, font:'Calibri' })]
-                    }),
-                    new Paragraph({
-                        children:[new TextRun({ text: `${jahr}`, size:130*2, font:'Calibri' })]
-                    }),
-                    new Paragraph({ text:'' }),
-                    new Paragraph({ text:'' }) // zwei Leerzeilen für Abstand
-                ]
-            });
-        }
+  for(let r=von; r<=bis; r++){
+    sections.push({
+      properties: {},
+      children: [
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 400 },
+          children: [ new TextRun({ text: `${feld}/${r}`, font: "Calibri", size: 130*2 }) ]
+        }),
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          children: [ new TextRun({ text: `${jahr}`, font: "Calibri", size: 130*2 }) ]
+        })
+      ]
     });
+  }
 
-    Packer.toBlob(doc).then(blob=>{ saveAs(blob, `Inventur.docx`); });
-}
+  const doc = new Document({ sections });
+  const blob = await Packer.toBlob(doc);
 
-// PDF export
-function exportPDF() {
-    const pdf = new jsPDF({ unit:'pt', format:'a4' });
-    let y = 50;
-    pdf.setFont('Calibri');
-    pdf.setFontSize(130);
-    const pageHeight = pdf.internal.pageSize.height;
-
-    const blocks = document.querySelectorAll('.block');
-    blocks.forEach(b=>{
-        const feld = b.querySelector('.feldNr').value;
-        const von = b.querySelector('.regalVon').value || 1;
-        const bis = b.querySelector('.regalBis').value || 15;
-        const jahr = b.querySelector('.jahr').value || new Date().getFullYear();
-
-        for(let r=Number(von); r<=Number(bis); r++){
-            if(y+130>pageHeight-50){ pdf.addPage(); y=50; }
-            pdf.text(`${feld}/${r}`, 50, y);
-            y += 130;
-            if(y+130>pageHeight-50){ pdf.addPage(); y=50; }
-            pdf.text(`${jahr}`, 50, y);
-            y += 130;
-        }
-    });
-
-    pdf.save('Inventur.pdf');
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = "Inventur.docx";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }
 </script>
+
 </body>
 </html>
