@@ -7,91 +7,136 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://unpkg.com/docx@8.1.0/build/index.js"></script>
+<style>
+  body { background:#f8f9fa; }
+  .block {
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border-radius:8px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1);
+  }
+</style>
 </head>
-<body class="p-4 bg-light">
+<body class="p-4">
 
 <div class="container">
-  <h2 class="mb-3">Inventur Druck Generator</h2>
-  
-  <div class="mb-3">
-    <label>Feld-Nr:</label>
-    <input type="number" id="feld" class="form-control" value="4009">
-  </div>
-  <div class="mb-3">
-    <label>Regal von:</label>
-    <input type="number" id="von" class="form-control" value="1">
-  </div>
-  <div class="mb-3">
-    <label>Regal bis:</label>
-    <input type="number" id="bis" class="form-control" value="5">
-  </div>
-  <div class="mb-3">
-    <label>Jahr:</label>
-    <input type="number" id="jahr" class="form-control" value="2025">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Inventur Druck Generator</h2>
+    <a href="index.html" class="btn btn-secondary">🏠 Heim</a>
   </div>
 
-  <button class="btn btn-primary me-2" onclick="generatePDF()">📄 PDF erzeugen</button>
-  <button class="btn btn-success" onclick="generateWord()">📝 Word erzeugen</button>
+  <div id="blocksContainer"></div>
+
+  <button class="btn btn-outline-primary mb-3" onclick="addBlock()">➕ Block hinzufügen</button>
+
+  <div class="d-flex flex-wrap gap-2">
+    <button class="btn btn-primary" onclick="generatePDF()">📄 PDF erzeugen</button>
+    <button class="btn btn-success" onclick="generateWord()">📝 Word erzeugen</button>
+  </div>
 
   <div id="downloadLinkContainer" class="mt-3"></div>
 </div>
 
 <script>
-// 🟦 PDF Generator – Text mittig pro Seite
+// 🧱 Erstellt einen neuen Eingabe-Block
+function addBlock(feld='', von=1, bis=15, jahr=new Date().getFullYear()){
+  const container = document.getElementById('blocksContainer');
+  const block = document.createElement('div');
+  block.className = 'block';
+
+  block.innerHTML = `
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label">Feld-Nr</label>
+        <input type="number" class="form-control feldNummer" value="${feld}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Regal von</label>
+        <input type="number" class="form-control regalVon" value="${von}">
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Regal bis</label>
+        <input type="number" class="form-control regalBis" value="${bis}">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Jahr</label>
+        <input type="number" class="form-control jahr" value="${jahr}">
+      </div>
+      <div class="col-md-1 text-end">
+        <button class="btn btn-outline-danger" onclick="this.closest('.block').remove()">❌</button>
+      </div>
+    </div>
+  `;
+  container.appendChild(block);
+}
+
+// Beim Start ein Block anzeigen
+addBlock();
+
+// 🟦 PDF Generator – pro Druck eine Seite
 function generatePDF(){
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit:'pt', format:'a4' });
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
 
-  const feld = document.getElementById('feld').value || '-';
-  const von = parseInt(document.getElementById('von').value) || 1;
-  const bis = parseInt(document.getElementById('bis').value) || 15;
-  const jahr = document.getElementById('jahr').value || new Date().getFullYear();
-
   doc.setFont("Helvetica", "normal");
   doc.setFontSize(130);
 
-  for(let r=von; r<=bis; r++){
-    const oben = `${feld}/${r}`;
-    const mitte = `${jahr}`;
-    const obenBreite = doc.getTextWidth(oben);
-    const mitteBreite = doc.getTextWidth(mitte);
-    doc.text(oben, (pageWidth-obenBreite)/2, pageHeight/2 - 100);
-    doc.text(mitte, (pageWidth-mitteBreite)/2, pageHeight/2 + 50);
-    if(r < bis) doc.addPage();
-  }
+  const blocks = document.querySelectorAll('.block');
+  let first = true;
+
+  blocks.forEach(block=>{
+    const feld = block.querySelector('.feldNummer').value || '-';
+    const von = parseInt(block.querySelector('.regalVon').value) || 1;
+    const bis = parseInt(block.querySelector('.regalBis').value) || 15;
+    const jahr = block.querySelector('.jahr').value || new Date().getFullYear();
+
+    for(let r=von; r<=bis; r++){
+      if(!first) doc.addPage();
+      first=false;
+      const oben = `${feld}/${r}`;
+      const mitte = `${jahr}`;
+      const obenW = doc.getTextWidth(oben);
+      const mitteW = doc.getTextWidth(mitte);
+      doc.text(oben, (pageWidth-obenW)/2, pageHeight/2 - 100);
+      doc.text(mitte, (pageWidth-mitteW)/2, pageHeight/2 + 50);
+    }
+  });
 
   doc.save('Inventur.pdf');
 }
 
-// 🟩 Word Generator – Text zentriert, pro Seite neu
+// 🟩 Word Generator – zentriert pro Seite
 async function generateWord(){
   const { Document, Packer, Paragraph, TextRun, AlignmentType } = window.docx;
-
-  const feld = document.getElementById('feld').value || '-';
-  const von = parseInt(document.getElementById('von').value) || 1;
-  const bis = parseInt(document.getElementById('bis').value) || 15;
-  const jahr = document.getElementById('jahr').value || new Date().getFullYear();
-
+  const blocks = document.querySelectorAll('.block');
   const sections = [];
 
-  for(let r=von; r<=bis; r++){
-    sections.push({
-      properties: {},
-      children: [
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 800 },
-          children: [ new TextRun({ text: `${feld}/${r}`, font: "Calibri", size: 260 }) ]
-        }),
-        new Paragraph({
-          alignment: AlignmentType.CENTER,
-          children: [ new TextRun({ text: `${jahr}`, font: "Calibri", size: 260 }) ]
-        })
-      ]
-    });
-  }
+  blocks.forEach(block=>{
+    const feld = block.querySelector('.feldNummer').value || '-';
+    const von = parseInt(block.querySelector('.regalVon').value) || 1;
+    const bis = parseInt(block.querySelector('.regalBis').value) || 15;
+    const jahr = block.querySelector('.jahr').value || new Date().getFullYear();
+
+    for(let r=von; r<=bis; r++){
+      sections.push({
+        properties: {},
+        children: [
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 800 },
+            children: [ new TextRun({ text: `${feld}/${r}`, font: "Calibri", size: 260 }) ]
+          }),
+          new Paragraph({
+            alignment: AlignmentType.CENTER,
+            children: [ new TextRun({ text: `${jahr}`, font: "Calibri", size: 260 }) ]
+          })
+        ]
+      });
+    }
+  });
 
   const doc = new Document({ sections });
   const blob = await Packer.toBlob(doc);
@@ -103,7 +148,7 @@ async function generateWord(){
   link.className = "btn btn-outline-primary mt-3";
 
   const container = document.getElementById("downloadLinkContainer");
-  container.innerHTML = ""; // vorherige Links entfernen
+  container.innerHTML = "";
   container.appendChild(link);
 }
 </script>
