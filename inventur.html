@@ -32,15 +32,15 @@
 
   <div class="d-flex flex-wrap gap-2">
     <button class="btn btn-primary" onclick="generatePDF()">📄 PDF erzeugen</button>
-    <button class="btn btn-success" onclick="generateWord()">📝 Word erzeugen</button>
+    <!--<button class="btn btn-success" onclick="generateWord()">📝 Word erzeugen</button>-->
   </div>
 
   <div id="downloadLinkContainer" class="mt-3"></div>
 </div>
 
 <script>
-// 🧱 Erstellt einen neuen Eingabe-Block
-function addBlock(feld='', von=1, bis=15, jahr=new Date().getFullYear()){
+// 🧱 Erstellt einen neuen Eingabe-Block new Date().getFullYear()
+function addBlock(feld='', von=1, bis=15, jahr=2026){
   const container = document.getElementById('blocksContainer');
   const block = document.createElement('div');
   block.className = 'block';
@@ -155,3 +155,4 @@ async function generateWord(){
 
 </body>
 </html>
+
