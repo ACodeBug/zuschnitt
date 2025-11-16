@@ -1,11 +1,11 @@
 // kontakt.js
 const kontaktInfo = {
     oeffnungszeiten: [
-        "Mo: –",
+        "Mo: ab 16:30",
         "Di: –",
         "Mi: –",
         "Do: –",
-        "Fr: 11:30 - 19:30",
+        "Fr: 09:30 - 18:00",
         "Sa: 11:30 - 19:30",
         "So: –"
     ],
@@ -28,10 +28,8 @@ function erstelleKontaktKarte(containerId) {
 
     karte.innerHTML = `
         <h2>Kontakt & Öffnungszeiten</h2>
-        <p><strong>Zuschnitt Öffnungszeiten für 13.10 - 02.11 :</strong></p>
-        <p><strong>A. Didkovskyi – Urlaub</strong></p>
-        <p class="text-muted" style="font-size: 0.95em;">
-        Ich bin derzeit im Urlaub 🌴.<br>
+        <p><strong>Zuschnitt Öffnungszeiten für 17.11 - 22.11 :</strong></p>
+        <p><strong>A. Didkovskyi – Einsatzplan</strong></p>
         Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
         oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
         </p>
@@ -43,6 +41,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
