@@ -28,7 +28,7 @@ function erstelleKontaktKarte(containerId) {
 
     karte.innerHTML = `
         <h2>Kontakt & Öffnungszeiten</h2>
-        <p><strong>Zuschnitt Öffnungszeiten für 17.11 - 22.11 :</strong></p>
+        <p><strong>Zuschnitt Öffnungszeiten für 17.11 - 22.11 (KW 47):</strong></p>
         <p><strong>A. Didkovskyi – Einsatzplan</strong></p>
         Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
         oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
@@ -41,6 +41,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
