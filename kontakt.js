@@ -5,7 +5,7 @@ const kontaktInfo = {
         "Di: –",
         "Mi: –",
         "Do: –",
-        "Fr: 09:30 - 18:00",
+        "Fr: 08:00 - 16:00",
         "Sa: 11:30 - 19:30",
         "So: –"
     ],
@@ -41,6 +41,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
