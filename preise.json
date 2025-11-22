@@ -36,6 +36,40 @@
       ]
     },
     {
+      "holzname": "Span Weissbuche",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 788624 ,"preisProM2": 28.99 },
+        { "mm": 19, "ArtNr" : 548481 ,"preisProM2": 28.99 }
+      ]
+    },
+    {
+      "holzname": "Span Eiche hell",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 788642 ,"preisProM2": 28.99 },
+        { "mm": 19, "ArtNr" : 788633 ,"preisProM2": 31.99 }
+      ]
+    },
+    {
+      "holzname": "Span Eiche Sonoma",
+      "stärken": [
+        { "mm": 19, "ArtNr" : 934279 ,"preisProM2": 31.99 }
+      ]
+    },
+    {
+      "holzname": "Span Nussbaum",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 546557 ,"preisProM2": 28.99 },
+        { "mm": 19, "ArtNr" : 546558 ,"preisProM2": 31.99 }
+      ]
+    },
+    {
+      "holzname": "Span Holz Schwarz523485",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 546557 ,"preisProM2": 26.99 },
+        { "mm": 19, "ArtNr" : 548547 ,"preisProM2": 31.99 }
+      ]
+    },
+    {
       "holzname": "Sperrholz Buche",
       "stärken": [
         { "mm": 4, "ArtNr" : 509632 ,"preisProM2": 29.99 },
@@ -243,5 +277,6 @@
     }
   ]
   
+
 
 
