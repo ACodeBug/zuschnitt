@@ -13,7 +13,42 @@ const kontaktInfo = {
     email: "albert.inform.me@gmail.com",
     web: "www.baywa-baumarkt.de"
 };
+function getCurrentWeekRange() {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 = Sonntag, 1 = Montag ...
+    
+    // Montag dieser Woche berechnen
+    const monday = new Date(today);
+    const diffToMonday = (currentDay === 0 ? -6 : 1 - currentDay);
+    monday.setDate(today.getDate() + diffToMonday);
 
+    // Samstag der gleichen Woche berechnen
+    const saturday = new Date(monday);
+    saturday.setDate(monday.getDate() + 5);
+
+    // Kalenderwoche berechnen
+    const kw = calcKW(today);
+
+    // Format: TT.MM
+    const fmt = d => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
+
+    return {
+        kw,
+        von: fmt(monday),
+        bis: fmt(saturday)
+    };
+}
+// ISO-Kalenderwoche berechnen
+function calcKW(date) {
+    const target = new Date(date.valueOf());
+    const dayNr = (date.getDay() + 6) % 7; // Montag = 0
+    target.setDate(target.getDate() - dayNr + 3);
+    const firstThursday = new Date(target.getFullYear(),0,4);
+    const diff = (target - firstThursday) / 86400000;
+    return 1 + Math.floor(diff / 7);
+}
+
+const week = getCurrentWeekRange();
 function erstelleKontaktKarte(containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -27,20 +62,21 @@ function erstelleKontaktKarte(containerId) {
         .join("");
 
     karte.innerHTML = `
-        <h2>Kontakt & Öffnungszeiten</h2>
-        <p><strong>Zuschnitt Öffnungszeiten für 17.11 - 22.11 (KW 47):</strong></p>
-        <p><strong>A. Didkovskyi – Einsatzplan</strong></p>
-        Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
-        oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
-        </p>
-        <ul>${oeffnungszeitenHtml}</ul>
-        <p><strong>Telefon:</strong> <a href="tel:${kontaktInfo.telefon.replace(/\s+/g,'')}">${kontaktInfo.telefon}</a></p>
-        <p><strong>E-Mail:</strong> <a href="mailto:${kontaktInfo.email}">${kontaktInfo.email}</a></p>
-        <p><strong>Web:</strong> <a href="https://${kontaktInfo.web}" target="_blank">${kontaktInfo.web}</a></p>
-    `;
+    <h2>Kontakt & Öffnungszeiten</h2>
+    <p><strong>Zuschnitt Öffnungszeiten für ${week.von} - ${week.bis} (KW ${week.kw}):</strong></p>
+    <p><strong>A. Didkovskyi – Einsatzplan</strong></p>
+    Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
+    oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
+    </p>
+    <ul>${oeffnungszeitenHtml}</ul>
+    <p><strong>Telefon:</strong> <a href="tel:${kontaktInfo.telefon.replace(/\s+/g,'')}">${kontaktInfo.telefon}</a></p>
+    <p><strong>E-Mail:</strong> <a href="mailto:${kontaktInfo.email}">${kontaktInfo.email}</a></p>
+    <p><strong>Web:</strong> <a href="https://${kontaktInfo.web}" target="_blank">${kontaktInfo.web}</a></p>
+`;
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
