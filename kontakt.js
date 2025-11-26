@@ -27,7 +27,7 @@ function getCurrentWeekRange() {
     saturday.setDate(monday.getDate() + 5);
 
     // Kalenderwoche berechnen
-    const kw = calcKW(today);
+    const kw = calcKW(monday);
 
     // Format: TT.MM
     const fmt = d => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
@@ -76,6 +76,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
