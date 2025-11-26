@@ -16,7 +16,7 @@ const kontaktInfo = {
 function getCurrentWeekRange() {
     const today = new Date();
     const currentDay = today.getDay(); // 0 = Sonntag, 1 = Montag ...
-    
+
     // Montag dieser Woche berechnen
     const monday = new Date(today);
     const diffToMonday = (currentDay === 0 ? -6 : 1 - currentDay);
@@ -26,7 +26,7 @@ function getCurrentWeekRange() {
     const saturday = new Date(monday);
     saturday.setDate(monday.getDate() + 5);
 
-    // Kalenderwoche berechnen
+    // Korrektur: KW anhand des Montags berechnen
     const kw = calcKW(monday);
 
     // Format: TT.MM
@@ -38,6 +38,7 @@ function getCurrentWeekRange() {
         bis: fmt(saturday)
     };
 }
+
 // ISO-Kalenderwoche berechnen
 function calcKW(date) {
     const target = new Date(date.valueOf());
@@ -76,6 +77,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
