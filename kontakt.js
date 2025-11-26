@@ -41,11 +41,11 @@ function getCurrentWeekRange() {
 
 // ISO-Kalenderwoche berechnen
 function calcKW(date) {
-    const target = new Date(date.valueOf());
-    const dayNr = (date.getDay() + 6) % 7; // Montag = 0
-    target.setDate(target.getDate() - dayNr + 3);
-    const firstThursday = new Date(target.getFullYear(),0,4);
-    const diff = (target - firstThursday) / 86400000;
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = (d.getUTCDay() + 6) % 7;
+    d.setUTCDate(d.getUTCDate() - dayNum + 3);
+    const firstThursday = new Date(Date.UTC(d.getUTCFullYear(), 0, 4));
+    const diff = (d - firstThursday) / 86400000;
     return 1 + Math.floor(diff / 7);
 }
 
@@ -77,6 +77,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
