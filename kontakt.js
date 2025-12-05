@@ -6,7 +6,7 @@ const kontaktInfo = {
         "Mi: –",
         "Do: –",
         "Fr: –",
-        "Sa: 11:30 - 19:30",
+        "Sa: –",
         "So: –"
     ],
     telefon: "+49 8171 219165",
@@ -77,6 +77,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
