@@ -1,0 +1,50 @@
+<div class="block">
+  <div class="row g-2 align-items-end">
+    <div class="col-md-3">
+      <label class="form-label">Größe</label>
+      <input type="number" class="form-control safebagSize" value="48">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Jahr</label>
+      <input type="number" class="form-control jahr" value="2026">
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Wochenanzahl</label>
+      <input type="number" class="form-control kwCount" value="1">
+    </div>
+  </div>
+</div>
+
+<button class="btn btn-primary" onclick="generateSafebagPDF()">📄 PDF erzeugen</button>
+
+<script>
+function generateSafebagPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4' });
+  const pageWidth = doc.internal.pageSize.width;
+  const pageHeight = doc.internal.pageSize.height;
+
+  const block = document.querySelector('.block');
+  const size = block.querySelector('.safebagSize').value || 48;
+  const year = block.querySelector('.jahr').value || new Date().getFullYear();
+  const weeks = parseInt(block.querySelector('.kwCount').value) || 1;
+
+  doc.setFont("Helvetica", "normal");
+  doc.setFontSize(20);
+
+  for(let kw=1; kw<=weeks; kw++){
+    if(kw > 1) doc.addPage();
+
+    const line1 = `Entsorgte Safebags`;
+    const line2 = `${year} KW ${kw}`;
+
+    const line1Width = doc.getTextWidth(line1);
+    const line2Width = doc.getTextWidth(line2);
+
+    doc.text(line1, (pageWidth - line1Width)/2, pageHeight/2 - 20);
+    doc.text(line2, (pageWidth - line2Width)/2, pageHeight/2 + 20);
+  }
+
+  doc.save('Safebags.pdf');
+}
+</script>
