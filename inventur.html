@@ -93,11 +93,21 @@ function generatePDF(){
     const bis = parseInt(block.querySelector('.regalBis').value) || 15;
     const jahr = block.querySelector('.jahr').value || new Date().getFullYear();
 
-    for(let r=von; r<=bis; r++){
+    /*for(let r=von; r<=bis; r++){
       if(!first) doc.addPage();
       first=false;
       const oben = `${feld}/${r}`;
       const mitte = `${jahr}`;
+      const obenW = doc.getTextWidth(oben);
+      const mitteW = doc.getTextWidth(mitte);
+      doc.text(oben, (pageWidth-obenW)/2, pageHeight/2 - 100);
+      doc.text(mitte, (pageWidth-mitteW)/2, pageHeight/2 + 50);
+    }*/
+    for(let r=von; r<=bis; r++){
+      if(!first) doc.addPage();
+      first=false;
+      const oben = `$Entsorgte Safebags`;
+      const mitte = `${jahr} KW ${r}`;
       const obenW = doc.getTextWidth(oben);
       const mitteW = doc.getTextWidth(mitte);
       doc.text(oben, (pageWidth-obenW)/2, pageHeight/2 - 100);
@@ -155,4 +165,5 @@ async function generateWord(){
 
 </body>
 </html>
+
 
