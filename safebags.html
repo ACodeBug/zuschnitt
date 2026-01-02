@@ -5,22 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Safebag PDF Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f8f9fa; }
-  label { display: block; margin-top: 10px; margin-bottom: 5px; }
-  input { padding: 5px; width: 100px; }
-  button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
-</style>
 </head>
 <body>
 
 <h2>Safebag PDF Generator</h2>
 
-<label for="jahrInput">Jahr:</label>
+<label>Jahr:</label>
 <input type="number" id="jahrInput" value="2026">
 
-<label for="kwInput">Anzahl KW (Seiten):</label>
+<br><br>
+
+<label>Anzahl KW (Seiten):</label>
 <input type="number" id="kwInput" value="3">
+
+<br><br>
 
 <button onclick="generateSafebagPDF()">📄 PDF erzeugen</button>
 
@@ -29,9 +27,8 @@ function generateSafebagPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
   const pageWidth = doc.internal.pageSize.width;
-  const pageHeight = doc.internal.pageSize.height;
 
-  const jahr = document.getElementById('jahrInput').value || new Date().getFullYear();
+  const jahr = document.getElementById('jahrInput').value || 2026;
   const kwCount = parseInt(document.getElementById('kwInput').value) || 1;
 
   doc.setFont("Helvetica", "normal");
@@ -43,11 +40,12 @@ function generateSafebagPDF() {
     const line1 = "Entsorgte Safebags";
     const line2 = `${jahr} KW ${kw}`;
 
-    const line1Width = doc.getTextWidth(line1);
-    const line2Width = doc.getTextWidth(line2);
+    const x1 = (pageWidth - doc.getTextWidth(line1)) / 2;
+    const x2 = (pageWidth - doc.getTextWidth(line2)) / 2;
 
-    doc.text(line1, (pageWidth - line1Width)/2, pageHeight/2 - 30);
-    doc.text(line2, (pageWidth - line2Width)/2, pageHeight/2 + 30);
+    // 👇 GANZ OBEN
+    doc.text(line1, x1, 80);
+    doc.text(line2, x2, 140);
   }
 
   doc.save("Safebags.pdf");
