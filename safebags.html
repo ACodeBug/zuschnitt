@@ -1,4 +1,4 @@
-<div class="block">
+<div class="block" id="safebagBlock">
   <div class="row g-2 align-items-end">
     <div class="col-md-3">
       <label class="form-label">Größe</label>
@@ -15,7 +15,7 @@
   </div>
 </div>
 
-<button class="btn btn-primary" onclick="generateSafebagPDF()">📄 PDF erzeugen</button>
+<button class="btn btn-primary mt-3" onclick="generateSafebagPDF()">📄 PDF erzeugen</button>
 
 <script>
 function generateSafebagPDF() {
@@ -24,7 +24,8 @@ function generateSafebagPDF() {
   const pageWidth = doc.internal.pageSize.width;
   const pageHeight = doc.internal.pageSize.height;
 
-  const block = document.querySelector('.block');
+  // Eindeutiger Safebag-Block
+  const block = document.getElementById('safebagBlock');
   const size = block.querySelector('.safebagSize').value || 48;
   const year = block.querySelector('.jahr').value || new Date().getFullYear();
   const weeks = parseInt(block.querySelector('.kwCount').value) || 1;
@@ -35,8 +36,8 @@ function generateSafebagPDF() {
   for(let kw=1; kw<=weeks; kw++){
     if(kw > 1) doc.addPage();
 
-    const line1 = `Entsorgte Safebags`;
-    const line2 = `${year} KW ${kw}`;
+    const line1 = `Entsorgte Safebags in grosse ${size}`;
+    const line2 = `${year} KW ${kw} auch in ${size} grosse`;
 
     const line1Width = doc.getTextWidth(line1);
     const line2Width = doc.getTextWidth(line2);
