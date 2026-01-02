@@ -106,7 +106,7 @@ function generatePDF(){
     for(let r=von; r<=bis; r++){
       if(!first) doc.addPage();
       first=false;
-      const oben = `$Entsorgte Safebags`;
+      const oben = `Entsorgte Safebags`;
       const mitte = `${jahr} KW ${r}`;
       const obenW = doc.getTextWidth(oben);
       const mitteW = doc.getTextWidth(mitte);
@@ -165,6 +165,7 @@ async function generateWord(){
 
 </body>
 </html>
+
 
 
 
