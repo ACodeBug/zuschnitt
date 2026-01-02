@@ -82,7 +82,7 @@ function generatePDF(){
   const pageHeight = doc.internal.pageSize.height;
 
   doc.setFont("Helvetica", "normal");
-  doc.setFontSize(130);
+  doc.setFontSize(48);
 
   const blocks = document.querySelectorAll('.block');
   let first = true;
@@ -165,5 +165,6 @@ async function generateWord(){
 
 </body>
 </html>
+
 
 
