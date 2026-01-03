@@ -65,7 +65,7 @@
     {
       "holzname": "Span Holz Schwarz",
       "stärken": [
-        { "mm": 16, "ArtNr" : 546557 ,"preisProM2": 26.99 },
+        { "mm": 16, "ArtNr" : 523485 ,"preisProM2": 26.99 },
         { "mm": 19, "ArtNr" : 548547 ,"preisProM2": 31.99 }
       ]
     },
@@ -277,6 +277,7 @@
     }
   ]
   
+
 
 
 
