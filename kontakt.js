@@ -27,7 +27,7 @@ function getCurrentWeekRange() {
     saturday.setDate(monday.getDate() + 5);
 
     // Korrektur: KW anhand des Montags berechnen
-    const kw = calcKW(monday) + 1;
+    const kw = calcKW(monday);
 
     // Format: TT.MM
     const fmt = d => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
@@ -64,7 +64,7 @@ function erstelleKontaktKarte(containerId) {
 
     karte.innerHTML = `
     <h2>Kontakt & Öffnungszeiten</h2>
-    <p><strong>Zuschnitt Öffnungszeiten für ${week.von} - ${week.bis} (KW ${week.kw}):</strong></p>
+    <p><strong>Zuschnitt Öffnungszeiten für ${week.von} - ${week.bis} (KW ${week.kw + 1}):</strong></p>
     <p><strong>A. Didkovskyi – Einsatzplan</strong></p>
     Bei Fragen nutzen Sie bitte die unten angegebene E-Mail-Adresse<br>
     oder das Feld <strong>„Ich möchte…“</strong> für eine direkte Nachricht.
@@ -77,6 +77,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
