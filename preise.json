@@ -80,6 +80,25 @@
       ]
     },
     {
+          "holzname": "Span Edelstahl grau",
+      "stärken": [
+        { "mm": 19, "ArtNr" : 788623 ,"preisProM2": 35.99 }
+      ]
+    },
+    {
+          "holzname": "Span Anthrazit grau",
+      "stärken": [
+        { "mm": 19, "ArtNr" : 788659 ,"preisProM2": 32.99 }
+      ]
+    },
+    {
+      "holzname": "Span Lichtgrau",
+      "stärken": [
+        { "mm": 16, "ArtNr" : 788576 ,"preisProM2": 21.99 },
+        { "mm": 19, "ArtNr" : 788650 ,"preisProM2": 27.99 }
+      ]
+    },
+    {
       "holzname": "MDF roh",
       "stärken": [
         { "mm": 3, "ArtNr" : 523479 ,"preisProM2": 4.99 },
@@ -277,6 +296,7 @@
     }
   ]
   
+
 
 
 
