@@ -27,7 +27,7 @@ function getCurrentWeekRange() {
     saturday.setDate(monday.getDate() + 5);
 
     // Korrektur: KW anhand des Montags berechnen
-    const kw = calcKW(monday);
+    const kw = calcKW(monday) + 1;
 
     // Format: TT.MM
     const fmt = d => d.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" });
@@ -77,6 +77,7 @@ function erstelleKontaktKarte(containerId) {
 
     container.prepend(karte); // oben einfügen
 }
+
 
 
 
