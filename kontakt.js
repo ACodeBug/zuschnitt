@@ -6,8 +6,8 @@ const kontaktInfo = {
         "Mi: –",
         "Do: –",
         "Fr: –",
-        "Sa: –",
-        "So: 11:30 - 18:00"
+        "Sa: 11:30 - 18:00",
+        "So: –"
     ],
     telefon: "+49 8171 219165",
     email: "albert.inform.me@gmail.com",
