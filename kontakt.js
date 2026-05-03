@@ -6,7 +6,7 @@ const kontaktInfo = {
         "Mi: –",
         "Do: –",
         "Fr: –",
-        "Sa: 11:30 - 18:00",
+        "Sa: –",
         "So: –"
     ],
     telefon: "+49 8171 219165",
